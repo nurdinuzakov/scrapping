@@ -15,8 +15,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/scrapping', [ScrappingController::class, 'firstScrapping'])->name('first.scrap');
+Route::get('/', [ScrappingController::class, 'firstScrapping'])->name('first.scrap');
