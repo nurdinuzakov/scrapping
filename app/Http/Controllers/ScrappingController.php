@@ -27,6 +27,7 @@ class ScrappingController extends Controller
         foreach ($chunkedLinks as $chunkedLink){
             $watchesData =[];
             $item = [];
+            $watchesDetails = [];
             foreach ($chunkedLink as $link){
                 $watchesDoc = new HtmlWeb();
                 $watchesHtml = $watchesDoc->load("{$link}");
@@ -108,15 +109,18 @@ class ScrappingController extends Controller
                     $item['alsoKnown'] = '';
                 }
                 $addInfo = [];
+                $watchDetails = [];
                 foreach($watchesHtml->find('div.attributes-table-details') as $details){
                     $label = $details->find('div.label', 0)->innertext;
                     $data = $details->find('div.data', 0)->innertext;
                     $addInfo[$label] = $data;
-                    $item['details'] = $addInfo;
+                    $watchDetails = $addInfo;
                 }
                 $watchesData[]=$item;
+                $watchesDetails[] = $watchDetails;
 
             }
+//            dd($watchesDetails);
             dd($watchesData);
         }
         // (optional) Release memory

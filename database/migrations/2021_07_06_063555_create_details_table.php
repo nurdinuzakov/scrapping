@@ -15,6 +15,8 @@ class CreateDetailsTable extends Migration
     {
         Schema::create('details', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('watch_id');
+            $table->foreign('watch_id')->references('id')->on('watches');
             $table->integer('reference_number')->nullable();
             $table->integer('also_known')->nullable();
             $table->string('band_type')->nullable();
