@@ -17,8 +17,12 @@ class CreateImagesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('watch_id');
             $table->foreign('watch_id')->references('id')->on('watches');
-            $table->string('url');
-            $table->timestamps();
+            $table->string('image');
+            $table->string('image1');
+            $table->string('image2');
+            $table->string('image3');
+            $table->string('image4');
+            $table->string('image5');
         });
     }
 

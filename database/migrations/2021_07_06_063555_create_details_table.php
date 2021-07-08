@@ -17,8 +17,8 @@ class CreateDetailsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('watch_id');
             $table->foreign('watch_id')->references('id')->on('watches');
-            $table->integer('reference_number')->nullable();
-            $table->integer('also_known')->nullable();
+            $table->string('reference_number')->nullable();
+            $table->string('also_known')->nullable();
             $table->string('band_type')->nullable();
             $table->string('bezel')->nullable();
             $table->string('caliber')->nullable();
@@ -40,7 +40,6 @@ class CreateDetailsTable extends Migration
             $table->string('strap_color')->nullable();
             $table->string('discontinued')->nullable();
             $table->string('limited_edition')->nullable();
-            $table->timestamps();
         });
     }
 

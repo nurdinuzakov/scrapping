@@ -17,11 +17,10 @@ class CreateWatchesTable extends Migration
             $table->id();
             $table->string('title');
             $table->integer('web_id');
-            $table->integer('model');
+            $table->string('model');
             $table->integer('price');
-            $table->integer('savings')->nullable();
-            $table->integer('also_known')->nullable();
-            $table->timestamps();
+            $table->string('savings')->nullable();
+            $table->string('also_known')->nullable();
         });
     }
 

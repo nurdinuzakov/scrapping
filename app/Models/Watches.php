@@ -12,7 +12,7 @@ class Watches extends Model
 
     public function images()
     {
-        return $this->hasMany(Images::class, 'watch_id');
+        return $this->hasMany(Images::class, 'model');
     }
 
     public function details()
