@@ -7,14 +7,13 @@ use App\Models\Details;
 use App\Models\Watches;
 use App\Models\Images;
 use simplehtmldom\HtmlWeb;
-use Illuminate\Support\Facades\DB;
 
 class ScrappingController extends Controller
 {
     public function firstScrapping()
     {
-        for($i=1; $i < 18; $i++) {
-
+        for($i=1; $i < 17; $i++) {
+                dump($i);
             $doc = new HtmlWeb();
             $html = $doc->load('https://www.luxurybazaar.com/catalog/category/list/id/10458?p=' . $i .
                 '&https://www.luxurybazaar.com/watches');
@@ -178,6 +177,8 @@ class ScrappingController extends Controller
             // Release memory
             $html->clear();
             unset($html);
+            break;
+            return $i;
         }
     }
 }
