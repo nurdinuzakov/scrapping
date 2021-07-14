@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\LinksController;
 use App\Http\Controllers\ScrappingController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/', [ScrappingController::class, 'firstScrapping'])->name('first.scrap');
+Route::get('/', [LinksController::class, 'collectLinks'])->name('collect.links');
+Route::get('/scrapping', [ScrappingController::class, 'scrapping'])->name('scrap');

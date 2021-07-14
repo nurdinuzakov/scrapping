@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\LinksController;
 use App\Http\Controllers\ScrappingController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -27,8 +28,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
+//        $schedule->call(function () {
+//            (new LinksController())->collectLinks();
+//        });
+
         $schedule->call(function () {
-            (new ScrappingController())->firstScrapping();
+            (new ScrappingController())->scrapping();
         })->everyMinute();
 
     }
