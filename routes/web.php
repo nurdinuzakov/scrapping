@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [LinksController::class, 'collectLinks'])->name('collect.links');
+Route::get('/curl_links', [LinksController::class, 'collectCurlLinks'])->name('curl.links');
+Route::get('/gentleman_links', [LinksController::class, 'gentlemanCollectLinks'])->name('gentleman.links');
 Route::get('/scrapping', [ScrappingController::class, 'scrapping'])->name('scrap');
 Route::get('/prideLinks', [CollectPrideLinksController::class, 'collectPrideLinks'])->name('prideLinks');
-Route::get('/check_curl', [HomeController::class, 'getURL']);
+

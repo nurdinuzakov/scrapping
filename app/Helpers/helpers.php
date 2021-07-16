@@ -1,16 +1,7 @@
 <?php
 
-
-namespace App\Http\Controllers;
-
-
-use Illuminate\Http\Request;
-use Ixudra\Curl\Facades\Curl;
-
-
-class HomeController extends Controller
-{
-    function getURL($url = ('https://prideandpinion.com/'),$fields=null,$method=null,$file=null){
+if (!function_exists('getURL')) {
+    function getURL($url,$fields=null,$method=null,$file=null){
         // author   = Ighor Toth <igtoth@gmail.com>
         // required:
         //      url     = include http or https
@@ -71,9 +62,11 @@ class HomeController extends Controller
         if(curl_errno($ch)){
             echo 'error:' . curl_error($ch);
         } else {
-            dd($content);
             return $content;
         }
         curl_close($ch);
     }
 }
+
+
+

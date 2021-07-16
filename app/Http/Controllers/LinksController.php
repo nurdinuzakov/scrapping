@@ -4,8 +4,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Gentleman_links;
 use App\Models\Links;
+use App\Models\Pride_links;
 use App\Models\Temp;
+use simplehtmldom\HtmlDocument;
 use simplehtmldom\HtmlWeb;
 
 class LinksController extends Controller
@@ -33,9 +36,41 @@ class LinksController extends Controller
         dd('Links where successfully collected!');
     }
 
-    public function collectCurlLinks()
+    public function collectCurlLinks($start = 1)
     {
-        $url = ('https://prideandpinion.com/');
-        $url->getURL();
+        for($i = $start; $i < 4; $i++) {
+            $url = ('https://prideandpinion.com/collections/new-arrivals?page=' . $i . "'");
+            $getUrl = getUrl($url);
+            $doc = new HtmlDocument();
+            $html = $doc->load($getUrl);
+
+            $watches = $html->find('h2.productitem--title');
+            foreach($watches as $watch){
+                Pride_links::insert([
+
+                    'href' => $watch->find('a', 0)->attr['href'],
+                ]);
+            }
+        }
+        dd('Links where successfully collected!');
+    }
+
+    public function gentlemanCollectLinks($start = 1)
+    {
+        for($i = $start; $i < 7; $i++) {
+            $url = ('https://thetimepiecegentleman.com/collections/watches?page=' . $i . "'");
+            $getUrl = getUrl($url);
+            $doc = new HtmlDocument();
+            $html = $doc->load($getUrl);
+
+            $watches = $html->find('div.ProductItem__Wrapper');
+            foreach($watches as $watch){
+                Gentleman_links::insert([
+
+                    'href' => $watch->find('a.ProductItem__ImageWrapper ', 0)->attr['href'],
+                ]);
+            }
+        }
+        dd('Links where successfully collected!');
     }
 }
