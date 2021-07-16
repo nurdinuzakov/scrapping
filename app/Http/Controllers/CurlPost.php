@@ -1,0 +1,55 @@
+<?php
+
+// mutatis mutandis
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+class CurlPost extends Controller
+{
+    private $url;
+    private $options;
+
+    /**
+     * @param string $url     Request URL
+     * @param array  $options cURL options
+     */
+    public function __construct($url, array $options = [])
+    {
+        $this->url = $url;
+        $this->options = $options;
+    }
+
+    /**
+     * Get the response
+     * @return string
+     * @throws \RuntimeException On cURL error
+     */
+    public function __invoke(array $post)
+    {
+        $ch = \curl_init($this->url);
+
+        foreach ($this->options as $key => $val) {
+            \curl_setopt($ch, $key, $val);
+        }
+
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0");
+
+        \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
+        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $post);
+
+        $response = \curl_exec($ch);
+        $error    = \curl_error($ch);
+        $errno    = \curl_errno($ch);
+
+        if (\is_resource($ch)) {
+            \curl_close($ch);
+        }
+
+        if (0 !== $errno) {
+            throw new \RuntimeException($error, $errno);
+        }
+
+        return $response;
+    }
+}

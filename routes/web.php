@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\CollectPrideLinksController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LinksController;
 use App\Http\Controllers\ScrappingController;
 use Illuminate\Support\Facades\Route;
@@ -19,3 +21,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LinksController::class, 'collectLinks'])->name('collect.links');
 Route::get('/scrapping', [ScrappingController::class, 'scrapping'])->name('scrap');
+Route::get('/prideLinks', [CollectPrideLinksController::class, 'collectPrideLinks'])->name('prideLinks');
+Route::get('/check_curl', [HomeController::class, 'getURL']);

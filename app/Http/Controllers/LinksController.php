@@ -20,6 +20,7 @@ class LinksController extends Controller
             $html = $doc->load('https://www.luxurybazaar.com/catalog/category/list/id/10458?p=' . $i .
                 '&https://www.luxurybazaar.com/watches');
 
+
             $watches = $html->find('li.item');
 
             foreach($watches as $watch){
@@ -32,22 +33,9 @@ class LinksController extends Controller
         dd('Links where successfully collected!');
     }
 
-//    public function collectPrideLinks($start1 = 1)
-//    {
-//        for($i = $start1; $i < 17; $i++) {
-//            $doc = new HtmlWeb();
-//            $html = $doc->load('https://www.luxurybazaar.com/catalog/category/list/id/10458?p=' . $i .
-//                '&https://www.luxurybazaar.com/watches');
-//
-//            $watches = $html->find('li.item');
-//
-//            foreach($watches as $watch){
-//                Links::insert([
-//
-//                    'href' => $watch->find('h2.product-name a', 0)->attr['href'],
-//                ]);
-//            }
-//        }
-//        dd('Links where successfully collected!');
-//    }
+    public function collectCurlLinks()
+    {
+        $url = ('https://prideandpinion.com/');
+        $url->getURL();
+    }
 }
