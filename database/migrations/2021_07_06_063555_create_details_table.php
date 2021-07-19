@@ -20,6 +20,7 @@ class CreateDetailsTable extends Migration
             $table->string('reference_number')->nullable();
             $table->string('also_known')->nullable();
             $table->string('band_type')->nullable();
+            $table->string('glass')->nullable();
             $table->string('bezel')->nullable();
             $table->string('caliber')->nullable();
             $table->string('case_back')->nullable();

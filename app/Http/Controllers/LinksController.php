@@ -36,7 +36,7 @@ class LinksController extends Controller
         dd('Links where successfully collected!');
     }
 
-    public function collectCurlLinks($start = 1)
+    public function collectPrideLinks($start = 1)
     {
         for($i = $start; $i < 4; $i++) {
             $url = ('https://prideandpinion.com/collections/new-arrivals?page=' . $i . "'");

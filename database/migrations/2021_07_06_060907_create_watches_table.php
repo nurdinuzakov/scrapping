@@ -17,7 +17,7 @@ class CreateWatchesTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('web_id');
-            $table->string('model');
+            $table->string('model')->nullable();
             $table->string('price');
             $table->string('savings')->nullable();
             $table->string('also_known')->nullable();

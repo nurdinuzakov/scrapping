@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Details;
 use App\Models\Links;
+use App\Models\Pride_links;
 use App\Models\Temp;
 use App\Models\Watches;
 use App\Models\Images;
+use simplehtmldom\HtmlDocument;
 use simplehtmldom\HtmlWeb;
 
 class ScrappingController extends Controller
@@ -100,6 +102,84 @@ class ScrappingController extends Controller
                 'discontinued' => $addInfo['Discontinued'],
                 'limited_edition' => $addInfo['Limited Edition'],
             ]);
+        }
+    }
+
+    public function prideScrapping()
+    {
+        set_time_limit(1000);
+
+        $links = Pride_links::pluck('href')->toArray();
+
+        foreach ($links as $link){
+            $url = ('https://prideandpinion.com' . $link);
+            $getUrl = getUrl($url);
+            $doc = new HtmlDocument();
+            $html = $doc->load($getUrl);
+
+            $item = [];
+
+            $item['title'] = data_get($html->find('h1', 0), 'plaintext', 'Unknown title');
+            $text = data_get($html->find('div.product-sku', 0)->find('span', 0), 'innertext', '-');
+            $item['webid'] = substr($text,0, 6);
+            $item['price'] = data_get($html->find('div.price--main', 0)->find('span.money', 0), 'plaintext', '-');
+
+            Watches::insert([
+                'title' => $item['title'],
+                'web_id' => $item['webid'],
+                'price' => $item['price'],
+            ]);
+
+            $images = [];
+
+            $images['image'] = data_get($html->find('img.product-gallery--thumbnail', 0), 'attr.src', '-');
+            $images['image1'] = data_get($html->find('img.product-gallery--thumbnail', 1), 'attr.src', '-');
+            $images['image2'] = data_get($html->find('img.product-gallery--thumbnail', 2), 'attr.src', '-');
+            $images['image3'] = data_get($html->find('img.product-gallery--thumbnail', 3), 'attr.src', '-');
+            $images['image4'] = data_get($html->find('img.product-gallery--thumbnail', 4), 'attr.src', '-');
+            $images['image5'] = data_get($html->find('img.product-gallery--thumbnail', 5), 'attr.src', '-');
+
+            $id = Watches::latest('id')->first()->id;
+
+            Images::insert([
+                'watch_id' => $id,
+                'image' => $images['image'],
+                'image1' => $images['image1'],
+                'image2' => $images['image2'],
+                'image3' => $images['image3'],
+                'image4' => $images['image4'],
+                'image5' => $images['image5'],
+            ]);
+
+
+            $data = [];
+            foreach ($html->find('div#tab-2') as $details) {
+                for($i =0; $i <=7; $i++){
+                    $label = data_get($details->find('th', $i), 'innertext', '-');
+                    $data[$label] = data_get($details->find('td', $i), 'innertext', '-');
+                }
+            }
+
+            $dataCondition = [];
+            foreach ($html->find('div#tab-3') as $details){
+                $label = data_get($details->find('th', 0),'innertext', '-');
+                $dataCondition[$label] = data_get($details->find('td', 0),'innertext', '-');
+            }
+
+//            dd($data['Caliber']);
+            Details::insert([
+                'watch_id' => $id,
+                'reference_number' => $data['Reference'],
+                'movement' => $data['Movement'],
+                'caliber' => $data['Caliber'],
+                'dial_color' => $data['Dial'],
+                'case_size' => $data['Size (Case)'],
+                'case_material' => $data['Material (Case)'],
+                'band_type' => $data['Bracelet'],
+                'glass' => $data['Glass'],
+                'condition' => $dataCondition['Condition'],
+            ]);
+
         }
     }
 
