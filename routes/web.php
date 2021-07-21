@@ -24,3 +24,4 @@ Route::get('/pride_links', [LinksController::class, 'collectPrideLinks'])->name(
 Route::get('/gentleman_links', [LinksController::class, 'gentlemanCollectLinks'])->name('gentleman.links');
 Route::get('/scrapping', [ScrappingController::class, 'scrapping'])->name('scrap');
 Route::get('/pride_scrapping', [ScrappingController::class, 'prideScrapping'])->name('pride.scrapping');
+Route::get('/gentleman_scrapping', [ScrappingController::class, 'gentlemanScrapping'])->name('gentleman.scrapping');

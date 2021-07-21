@@ -16,9 +16,9 @@ class CreateWatchesTable extends Migration
         Schema::create('watches', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('web_id');
+            $table->string('web_id')->nullable();;
             $table->string('model')->nullable();
-            $table->string('price');
+            $table->string('price')->nullable();;
             $table->string('savings')->nullable();
             $table->string('also_known')->nullable();
         });

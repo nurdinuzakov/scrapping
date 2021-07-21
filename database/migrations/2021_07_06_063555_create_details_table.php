@@ -41,6 +41,10 @@ class CreateDetailsTable extends Migration
             $table->string('strap_color')->nullable();
             $table->string('discontinued')->nullable();
             $table->string('limited_edition')->nullable();
+            $table->string('year')->nullable();
+            $table->string('box')->nullable();
+            $table->string('warranty')->nullable();
+            $table->string('water resistance')->nullable();
         });
     }
 
