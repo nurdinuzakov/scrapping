@@ -21,6 +21,14 @@ class ScrappingController extends Controller
 
         $links = Links::pluck('href')->toArray();
 
+//        $links = Links::whereBetween('id', [771, 1413])->get()->toArray();
+//
+//        foreach ($links as $key => $value){
+//            $links[$value['id']] = $value['href'];
+//            unset($links[$key]);
+//        }
+
+
         foreach ($links as $link) {
             $Doc = new HtmlWeb();
             $Html = $Doc->load("{$link}");
@@ -128,7 +136,6 @@ class ScrappingController extends Controller
             ($temp1 == null) ? ($temp2 = '-') : ($temp2 = data_get($temp1, 'plaintext'));
             $item['price'] = $temp2;
 
-            dump($item);
 
             Watches::insert([
                 'title' => $item['title'],
@@ -158,52 +165,55 @@ class ScrappingController extends Controller
             ]);
 
 
+            $data = [];
             foreach ($html->find('div#tab-2') as $details) {
-                $label = data_get($details->find('th', 0), 'innertext', 'Reference');
-                $data = data_get($details->find('td', 0), 'innertext', null);
-                $totalDetails [$label] = $data;
-                $label1 = data_get($details->find('th', 1), 'innertext', 'Movement');
-                $data1 = data_get($details->find('td', 1), 'innertext', null);
-                $totalDetails [$label1] = $data1;
-                $label2 = data_get($details->find('th', 2), 'innertext', 'Caliber');
-                $data2 = data_get($details->find('td', 2), 'innertext', null);
-                $totalDetails [$label2] = $data2;
-                $label3 = data_get($details->find('th', 3), 'innertext', 'Dial');
-                $data3 = data_get($details->find('td', 3), 'innertext', null);
-                $totalDetails [$label3] = $data3;
-                $label4 = data_get($details->find('th', 4), 'innertext', 'Size (Case)');
-                $data4 = data_get($details->find('td', 4), 'innertext', null);
-                $totalDetails [$label4] = $data4;
-                $label5 = data_get($details->find('th', 5), 'innertext', 'Material (Case)');
-                $data5 = data_get($details->find('td', 5), 'innertext', null);
-                $totalDetails [$label5] = $data5;
-                $label6 = data_get($details->find('th', 6), 'innertext', 'Bracelet');
-                $data6 = data_get($details->find('td', 6), 'innertext', null);
-                $totalDetails [$label6] = $data6;
-                $label7 = data_get($details->find('th', 7), 'innertext', 'Glass');
-                $data7 = data_get($details->find('td', 7), 'innertext', null);
-                $totalDetails [$label7] = $data7;
+                for($i =0; $i <=8; $i++){
+                    $label = data_get($details->find('th', $i), 'innertext', '-');
+                    $data[$label] = data_get($details->find('td', $i), 'innertext', '-');
+                }
             }
-            $dataCondition = [];
+
+            $data1 = [];
             foreach ($html->find('div#tab-3') as $details){
-                $label = data_get($details->find('th', 0),'innertext', '-');
-                $dataCondition[$label] = data_get($details->find('td', 0),'innertext', '-');
+                for($i =0; $i <=5; $i++) {
+                    $label = data_get($details->find('th', $i), 'innertext', '-');
+                    $data1[$label] = data_get($details->find('td', $i), 'innertext', '-');
+                }
             }
 
 
-            Details::insert([
+            $reference = $data['Reference'] ?? '-';
+            $bracelet = $data['Bracelet'] ?? '-';
+            $clasp = $data['Clasp'] ?? '-';
+            $movement = $data['Movement'] ?? '-';
+            $caliber = $data['Caliber'] ?? '-';
+            $bezel = $data['Bezel'] ?? '-';
+            $case = $data['Material (Case)'] ?? '-';
+            $size = $data['Size (Case)'] ?? '-';
+            $dial = $data['Dial'] ?? '-';
+            $glass = $data['Glass'] ?? '-';
+            $year = $data1['Year'] ?? '-';
+            $condition = $data1['Condition'] ?? '-';
+            $warranty = $data1['Warranties'] ?? '-';
+            $box = $data1['Box'] ?? '-';
+
+            Details::insert(array(
                 'watch_id' => $id,
-                'reference_number' => $totalDetails['Reference'],
-                'movement' => $totalDetails['Movement'],
-                'caliber' => $totalDetails['Caliber'],
-                'dial_color' => $totalDetails['Dial'],
-                'case_size' => $totalDetails['Size (Case)'],
-                'case_material' => $totalDetails['Material (Case)'],
-                'band_type' => $totalDetails['Bracelet'],
-                'glass' => $totalDetails['Glass'],
-                'condition' => $dataCondition['Condition'],
-            ]);
-            dump($totalDetails);
+                'reference_number' => $reference,
+                'caliber' => $caliber,
+                'movement' => $movement,
+                'band_type' => $bracelet,
+                'bezel' => $bezel,
+                'clasp_type' => $clasp,
+                'case_material' => $case,
+                'case_size' => $size,
+                'dial_color' => $dial,
+                'glass' => $glass,
+                'year' => $year,
+                'condition' => $condition,
+                'warranty' => $warranty,
+                'box' => $box,
+            ));
         }
     }
 
@@ -252,12 +262,9 @@ class ScrappingController extends Controller
 
             $images['image'] = data_get($html->find('img.Image--fadeIn', 0), 'attr.data-original-src', '-');
             $images['image1'] = data_get($html->find('img.Image--fadeIn', 1), 'attr.data-original-src', '-');
-            dd($images);
-            $images['image1'] = data_get($html->find('img.product-gallery--thumbnail', 1), 'attr.src', '-');
-            $images['image2'] = data_get($html->find('img.product-gallery--thumbnail', 2), 'attr.src', '-');
-            $images['image3'] = data_get($html->find('img.product-gallery--thumbnail', 3), 'attr.src', '-');
-            $images['image4'] = data_get($html->find('img.product-gallery--thumbnail', 4), 'attr.src', '-');
-            $images['image5'] = data_get($html->find('img.product-gallery--thumbnail', 5), 'attr.src', '-');
+            $images['image2'] = data_get($html->find('img.Image--fadeIn', 2), 'attr.data-original-src', '-');
+            $images['image3'] = data_get($html->find('img.Image--fadeIn', 3), 'attr.data-original-src', '-');
+            $images['image4'] = data_get($html->find('img.Image--fadeIn', 4), 'attr.data-original-src', '-');
 
             $id = Watches::latest('id')->first()->id;
 
@@ -268,7 +275,6 @@ class ScrappingController extends Controller
                 'image2' => $images['image2'],
                 'image3' => $images['image3'],
                 'image4' => $images['image4'],
-                'image5' => $images['image5'],
             ]);
 
 
@@ -298,7 +304,6 @@ class ScrappingController extends Controller
                 'water resistance' => $resistance,
                 'warranty' => $warranty,
             ));
-            dump('loop done');
         }
     }
 
