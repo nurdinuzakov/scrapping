@@ -10,6 +10,6 @@ class Details extends Model
 {
     public function watches()
     {
-        return $this->hasOne(Watches::class);
+        return $this->hasMany(Watches::class,'id');
     }
 }

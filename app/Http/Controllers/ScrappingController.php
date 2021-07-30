@@ -116,11 +116,12 @@ class ScrappingController extends Controller
 
     public function prideScrapping()
     {
-        set_time_limit(400);
+        set_time_limit(250);
 
         $links = Pride_links::pluck('href')->toArray();
 
         foreach ($links as $link){
+            $link ?? exit();
             $url = ('https://prideandpinion.com' . $link);
             $getUrl = getUrl($url);
             $doc = new HtmlDocument();
@@ -129,6 +130,7 @@ class ScrappingController extends Controller
             $item = [];
 
             $item['title'] = data_get($html->find('h1', 0), 'plaintext', 'Unknown title');
+            $item['brand'] = data_get($html->find('div.product-vendor', 0)->find('a', 0), 'plaintext', 'Unknown model');
             $text = data_get($html->find('div.product-sku', 0)->find('span', 0), 'innertext', '-');
             $item['webid'] = substr($text,0, 6);
             $temp = $html->find('div.price--main', 0);
@@ -143,14 +145,26 @@ class ScrappingController extends Controller
                 'price' => $item['price'],
             ]);
 
-            $images = [];
 
-            $images['image'] = data_get($html->find('img.product-gallery--thumbnail', 0), 'attr.src', '-');
-            $images['image1'] = data_get($html->find('img.product-gallery--thumbnail', 1), 'attr.src', '-');
-            $images['image2'] = data_get($html->find('img.product-gallery--thumbnail', 2), 'attr.src', '-');
-            $images['image3'] = data_get($html->find('img.product-gallery--thumbnail', 3), 'attr.src', '-');
-            $images['image4'] = data_get($html->find('img.product-gallery--thumbnail', 4), 'attr.src', '-');
-            $images['image5'] = data_get($html->find('img.product-gallery--thumbnail', 5), 'attr.src', '-');
+            $input = data_get($html->find('img.product-gallery--thumbnail', 0), 'attr.srcset', '-');
+            $input1 = data_get($html->find('img.product-gallery--thumbnail', 1), 'attr.srcset', '-');
+            $input2 = data_get($html->find('img.product-gallery--thumbnail', 2), 'attr.srcset', '-');
+            $input3 = data_get($html->find('img.product-gallery--thumbnail', 3), 'attr.srcset', '-');
+            $input4 = data_get($html->find('img.product-gallery--thumbnail', 4), 'attr.srcset', '-');
+            $input5 = data_get($html->find('img.product-gallery--thumbnail', 5), 'attr.srcset', '-');
+
+            $takeTheLink=function($item){
+                $t = explode(",", $item); $x = end($t);
+                return $x;
+            };
+
+            $images = [];
+            $images['image'] =  $takeTheLink($input);
+            $images['image1'] =  $takeTheLink($input1);
+            $images['image2'] =  $takeTheLink($input2);
+            $images['image3'] =  $takeTheLink($input3);
+            $images['image4'] =  $takeTheLink($input4);
+            $images['image5'] =  $takeTheLink($input5);
 
             $id = Watches::latest('id')->first()->id;
 
@@ -196,6 +210,8 @@ class ScrappingController extends Controller
             $condition = $data1['Condition'] ?? '-';
             $warranty = $data1['Warranties'] ?? '-';
             $box = $data1['Box'] ?? '-';
+            $sigantures = $item['brand'] ?? '-';
+
 
             Details::insert(array(
                 'watch_id' => $id,
@@ -213,19 +229,22 @@ class ScrappingController extends Controller
                 'condition' => $condition,
                 'warranty' => $warranty,
                 'box' => $box,
+                'signatures' => $sigantures,
             ));
         }
     }
 
     public function gentlemanScrapping()
     {
-        set_time_limit(400);
+        set_time_limit(250);
 
         $links = Gentleman_links::pluck('href')->toArray();
 
         foreach ($links as $link){
+
             $url = ('https://thetimepiecegentleman.com' . $link);
             $getUrl = getUrl($url);
+            $doc = new HtmlDocument();
             $doc = new HtmlDocument();
             $html = $doc->load($getUrl);
 
@@ -247,6 +266,7 @@ class ScrappingController extends Controller
             }
 
             $item['title'] = data_get($html->find('h1.ProductMeta__Title', 0), 'plaintext', 'Unknown title');
+            $item['brand'] = data_get($html->find('h2.ProductMeta__Vendor', 0), 'plaintext', 'Unknown model');
             $item['price'] = data_get($html->find('span.ProductMeta__Price', 0), 'plaintext', '-');
             $model = $split['Model'] ?? '-';
             $item['model'] = $model;
@@ -289,6 +309,7 @@ class ScrappingController extends Controller
             $resistance = $split['Water Resistance'] ?? '-';
             $condition = $split['Condition'] ?? '-';
             $warranty = $split['Warranty'] ?? '-';
+            $sigantures = $item['brand'] ?? '-';
 
             Details::insert(array(
                 'watch_id' => $id,
@@ -303,10 +324,10 @@ class ScrappingController extends Controller
                 'condition' => $condition,
                 'water resistance' => $resistance,
                 'warranty' => $warranty,
+                'signatures' => $sigantures,
             ));
         }
+        dd('Gentleman data\'s where successfully collected!');
     }
-
-
 }
 

@@ -36,10 +36,10 @@ class LinksController extends Controller
         dd('Links where successfully collected!');
     }
 
-    public function collectPpride_linksrideLinks($start = 1)
+    public function collectPrideLinks()
     {
-        for($i = $start; $i < 4; $i++) {
-            $url = ('https://prideandpinion.com/collections/new-arrivals?page=' . $i . "'");
+        for($i = 1; $i < 4; $i++) {
+            $url = ('https://prideandpinion.com/collections/new-arrivals?page=' . $i);
             $getUrl = getUrl($url);
             $doc = new HtmlDocument();
             $html = $doc->load($getUrl);
@@ -55,10 +55,10 @@ class LinksController extends Controller
         dd('Links where successfully collected!');
     }
 
-    public function gentlemanCollectLinks($start = 1)
+    public function gentlemanCollectLinks()
     {
-        for($i = $start; $i < 7; $i++) {
-            $url = ('https://thetimepiecegentleman.com/collections/watches?page=' . $i . "'");
+        for($i = 1; $i < 7; $i++) {
+            $url = ('https://thetimepiecegentleman.com/collections/watches?page=' . $i);
             $getUrl = getUrl($url);
             $doc = new HtmlDocument();
             $html = $doc->load($getUrl);

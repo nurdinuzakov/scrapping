@@ -3,7 +3,9 @@
 
 use App\Http\Controllers\CollectPrideLinksController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\LinksController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ScrappingController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +19,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+Route::get('/', [HomePageController::class, 'homePage'])->name('homePage');
+Route::get('/brand_models/{brand}', [ProductController::class, 'brandModels'])->name('brand.models');
+Route::get('/product-details/{product_id}', [ProductController::class, 'productDetails'])->name('product.details');
+Route::get('/product/{watch_id}', [ProductController::class, 'product'])->name('product');
 
 
 Route::get('/collect_links', [LinksController::class, 'collectLinks'])->name('collect.links');
