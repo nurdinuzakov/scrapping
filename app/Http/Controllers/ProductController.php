@@ -20,22 +20,35 @@ use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
-    public function product(Request $request, $watch_id)
+    public function product($watch_id)
     {
-//        $categories = Category::all();
-//        if(!$subcategory_id){
-//            throw new NotFoundHttpException('The category was\'nt found!');
-//        }
-//        $products = Products::where('subcategory_id', '=', $subcategory_id)
-//            ->whereBetween('price', [$request->get('min_price', 0), $request->get('max_price', 600)])
-//            ->paginate(9);
         $watch = DB::table('watches')
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
             ->where('watches.id', '=', intval($watch_id))
             ->get();
 
-        return view('product.product-details', compact('watch'));
+        $images = [];
+        foreach ($watch as $watchData){
+            $images[] = $watchData->image;
+            $images[] = $watchData->image1;
+            $images[] = $watchData->image2;
+            $images[]= $watchData->image3;
+            $images[] = $watchData->image4;
+        }
+
+        $brand = $watchData->signatures;
+
+        $watches = DB::table('watches')
+            ->join('images', 'watches.id', '=', 'images.watch_id')
+            ->join('details', 'watches.id', '=', 'details.watch_id')
+            ->where('signatures', '=', $brand)
+            ->inRandomOrder()
+            ->take(15)
+            ->get()
+            ->toArray();
+
+        return view('product.product-details', ['watch' => $watch, 'images' => array_chunk($images, 3), 'watches' => array_chunk($watches, 3)]);
     }
 
     public function productDetails($product_id)
@@ -47,7 +60,6 @@ class ProductController extends Controller
 
 //        $categories = Category::all();
         $images = Images::where('watch_id', $product_id)->pluck('image')->toArray();
-        dd($images);
 
         if(!$product){
             throw new NotFoundHttpException('The product was\'nt found!');
@@ -63,88 +75,49 @@ class ProductController extends Controller
         $detailsData = Details::all();
 
         $brands = $detailsData->pluck('signatures')->toArray();
-        $watchBrands = array_unique($brands);
+        $watchBrands = array_filter(array_unique($brands));
 
         $data = [];
-        $searchKeys = [];
-        foreach ($watchBrands as $value){
-            $searchKeys[] = $value;
-        }
 
-
-        foreach ($searchKeys as $searchKey){
-            foreach ($watchBrands as $watchBrand) {
-                if (str_contains($watchBrand, $searchKey)) {
-                    $data[$searchKey][] = trim($watchBrand);
-                }
-            }
+        foreach ($watchBrands as $watchBrand) {
+                $data[$watchBrand] = trim($watchBrand);
         }
 
         $sidebar['Brands'] = $data;
 
-        $condition = $detailsData->pluck('condition')->toArray();
-        $watchConditions = array_filter(array_unique($condition));
-
         $data = [];
-        $searchKeys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
+        $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
 
-        foreach ($searchKeys as $searchKey){
-            foreach ($watchConditions as $watchCondition) {
-                if (str_contains($watchCondition, $searchKey)) {
-                    $data[$searchKey][] = trim($watchCondition);
-                }
-            }
+        foreach ($keys as $key){
+            $data[$key] = $key;
         }
 
         $sidebar['Condition'] = $data;
 
 
-        $watchMovement = $detailsData->pluck('movement')->toArray();
-        $movements = array_filter(array_unique($watchMovement));
-
-
         $data = [];
-        $searchKeys = ['Manual', 'Automatic', 'Quartz'];
+        $keys = ['Manual', 'Automatic', 'Quartz'];
 
-        foreach ($searchKeys as $searchKey){
-            foreach ($movements as $movement) {
-                if (str_contains($movement, $searchKey)) {
-                    $data[$searchKey][] = trim($movement);
-                }
-            }
+        foreach ($keys as $key){
+            $data[$key] = $key;
         }
 
         $sidebar['Movement'] = $data;
 
-
-        $bandType = $detailsData->pluck('band_type')->toArray();
-        $bands = array_filter(array_unique($bandType));
-
         $data = [];
-        $searchKeys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
+        $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
 
-        foreach ($searchKeys as $searchKey){
-            foreach ($bands as $band) {
-                if (str_contains($band, $searchKey)) {
-                    $data[$searchKey][] = trim($band);
-                }
-            }
+        foreach ($keys as $key){
+            $data[$key] = $key;
         }
 
         $sidebar['Band type'] = $data;
 
-        $caseMaterial = $detailsData->pluck('case_material')->toArray();
-        $cases = array_filter(array_unique($caseMaterial));
-
         $data = [];
-        $searchKeys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
+        $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
 
-        foreach ($searchKeys as $searchKey){
-            foreach ($cases as $case) {
-                if (str_contains($case, $searchKey)) {
-                    $data[$searchKey][] = trim($case);
-                }
-            }
+        foreach ($keys as $key){
+            $data[$key] = $key;
         }
 
         $sidebar['Case material'] = $data;
@@ -153,12 +126,13 @@ class ProductController extends Controller
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
             ->where('signatures', '=', $brand)
-            ->get();
+            ->paginate(15);
 
         if(!$watches){
             throw new NotFoundHttpException('The watches was\'nt found!');
         }
 
+//        dd($sidebar);
 
         return view('product.products', compact('watches', 'sidebar'));
     }

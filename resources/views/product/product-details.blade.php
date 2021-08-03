@@ -16,30 +16,50 @@
                 <div class="left-sidebar">
                     <h2>filters</h2>
                     <div class="panel-group category-products" id="accordian"><!--category-products-->
-                        @foreach($watch as $watchDetails)
-                            {{dd($watch)}}
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordian"
-                                           href="#">
-                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>
-                                            {{ $watchDetails->title }}
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="{{'watch_'. $watchDetails->id }}" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <ul>
-                                            @foreach($category->subcategories()->get()  as $subcategory)
-                                                <li><b><a href="{{ route('subcategory', ['category_id' =>
-                                                                   $category->id]) }}">{{ $subcategory->name }}</a></b></li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+{{--                        @foreach($sidebar as $key=>$data)--}}
+{{--                            <div class="panel panel-default">--}}
+{{--                                <div class="panel-heading">--}}
+{{--                                    <h4 class="panel-title">--}}
+{{--                                        <a data-toggle="collapse" data-parent="#accordian" href="#sportswear">--}}
+{{--                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>--}}
+{{--                                            {{$key}}--}}
+{{--                                        </a>--}}
+{{--                                    </h4>--}}
+{{--                                </div>--}}
+{{--                                <div id="sportswear" class="panel-collapse collapse">--}}
+{{--                                    <div class="panel-body">--}}
+{{--                                        <ul>--}}
+{{--                                            @foreach($data as $value)--}}
+{{--                                                <li><a href="#">{{$value}}</a></li>--}}
+{{--                                            @endforeach--}}
+{{--                                        </ul>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        @endforeach--}}
+{{--                        @foreach($watch as $watchDetails)--}}
+{{--                            <div class="panel panel-default">--}}
+{{--                                <div class="panel-heading">--}}
+{{--                                    <h4 class="panel-title">--}}
+{{--                                        <a data-toggle="collapse" data-parent="#accordian"--}}
+{{--                                           href="#">--}}
+{{--                                            <span class="badge pull-right"><i class="fa fa-plus"></i></span>--}}
+{{--                                            {{ $watchDetails->title }}--}}
+{{--                                        </a>--}}
+{{--                                    </h4>--}}
+{{--                                </div>--}}
+{{--                                <div id="{{'watch_'. $watchDetails->id }}" class="panel-collapse collapse">--}}
+{{--                                    <div class="panel-body">--}}
+{{--                                        <ul>--}}
+{{--                                            @foreach($category->subcategories()->get()  as $subcategory)--}}
+{{--                                                <li><b><a href="{{ route('subcategory', ['category_id' =>--}}
+{{--                                                                   $category->id]) }}">{{ $subcategory->name }}</a></b></li>--}}
+{{--                                            @endforeach--}}
+{{--                                        </ul>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        @endforeach--}}
                     </div><!--/category-products-->
 
 {{--                    <div class="brands_products"><!--brands_products-->--}}
@@ -77,19 +97,21 @@
                 <div class="product-details"><!--product-details-->
                     <div class="col-sm-5">
                         <div class="view-product">
-                            <img src="{{ $watchDetails->image }}" alt="" />
-                            <h3>ZOOM</h3>
+                            @foreach($watch as $watchData)
+                                <img src="{{ $watchData->image }}" alt="" />
+                                <h3>ZOOM</h3>
+                            @endforeach
                         </div>
                         <div id="similar-product" class="carousel slide" data-ride="carousel">
                             <!-- Wrapper for slides -->
                                 <div class="carousel-inner">
-{{--                                    @foreach($images as $image)--}}
-{{--                                        <div class="item @if($loop->first) active @endif">--}}
-{{--                                            @foreach($image as $url)--}}
-{{--                                                <a href=""><img src="{{ asset($url) }}" alt="" style="width: 70px; height: 80px;"></a>--}}
-{{--                                            @endforeach--}}
-{{--                                        </div>--}}
-{{--                                    @endforeach--}}
+                                    @foreach($images as $image)
+                                        <div class="item @if($loop->first) active @endif">
+                                            @foreach($image as $url)
+                                                <a href=""><img src="{{ $url }}" alt="" style="width: 70px; height: 80px;"></a>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
                                 </div>
 
                             <!-- Controls -->
@@ -105,96 +127,248 @@
                     </div>
                     <div class="col-sm-7">
                         <div class="product-information"><!--/product-information-->
-{{--                            <img src="{{ asset('images/product-details/new.jpg') }}" class="newarrival" alt="" />--}}
-                            <h2>{{$watchDetails->title}}</h2>
-                            <span>
-									<span>US ${{ $watchDetails->price }}</span>
-									<label>Quantity:</label>
-{{--									<input type="text" value="{{ $product->quantity }}" />--}}
-{{--									<button type="button" class="btn btn-fefault cart" id="addToCart" value="cart" data-product-id="{{ $product->id }}">--}}
-										<i class="fa fa-shopping-cart"></i>
-										В корзину
-									</button>
-								</span>
-                            <p><b>Availability:</b>
-{{--                                {{ $product->quantity > 0 ? 'In stock' : 'Not available' }}--}}
-                            </p>
-{{--                            <p><b>Condition:</b> New</p>--}}
-{{--                            <p><b>Brand:</b> E-SHOPPER</p>--}}
-{{--                            <div class="dropdowns">--}}
-{{--                                <div class="dropdown">--}}
-{{--                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Size chart--}}
-{{--                                        <span class="caret"></span></button>--}}
-{{--                                    <ul class="dropdown-menu">--}}
-{{--                                        <li><a href="#">XS</a></li>--}}
-{{--                                        <li><a href="#">S</a></li>--}}
-{{--                                        <li><a href="#">M</a></li>--}}
-{{--                                        <li><a href="#">L</a></li>--}}
-{{--                                        <li><a href="#">XL</a></li>--}}
-{{--                                        <li><a href="#">XXL</a></li>--}}
-{{--                                    </ul>--}}
-{{--                                </div>--}}
-
-{{--                                <div class="dropdown">--}}
-{{--                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color chart--}}
-{{--                                        <span class="caret"></span></button>--}}
-{{--                                    <ul class="dropdown-menu">--}}
-{{--                                        <li><a href="#">Белый</a></li>--}}
-{{--                                        <li><a href="#">Черный</a></li>--}}
-{{--                                        <li><a href="#">Красный</a></li>--}}
-{{--                                        <li><a href="#">Оранжевый</a></li>--}}
-{{--                                        <li><a href="#">Желтый</a></li>--}}
-{{--                                        <li><a href="#">Зеленый</a></li>--}}
-{{--                                        <li><a href="#">Синий</a></li>--}}
-{{--                                        <li><a href="#">Красный</a></li>--}}
-{{--                                        <li><a href="#">Голубой</a></li>--}}
-{{--                                    </ul>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-
-                        </div><!--/product-information-->
+                            @foreach($watch as $watchData)
+{{--                                {{dd($watchData)}}--}}
+                                <img src="{{ asset('images/product-details/new.jpg') }}" class="newarrival" alt="" />
+                                <h2>{{$watchData->title}}</h2>
+                                <p>Web ID: {{$watchData->web_id}}</p>
+                                <span>
+                                        <span>{{ $watchData->price }}</span>
+                                        <label>Quantity:</label>
+                                        <input type="text" value="1" />
+                                        <button type="button" class="btn btn-fefault cart" id="addToCart" value="cart" data-product-id="{{ $watchData->id }}">
+                                            <i class="fa fa-shopping-cart"></i>
+                                            В корзину
+                                        </button>
+                                    </span>
+                                <p><b>Savings:</b>
+                                    {{ $watchData->savings > 0 ? $watchData->savings : '' }}
+                                </p>
+                                <p><b>Condition:</b>
+                                    {{$watchData->condition}}
+                                </p>
+                                <p><b>Brand:</b>
+                                    {{$watchData->signatures}}
+                                </p>
+                            @endforeach
+                        </div>
+                    </div><!--/product-information-->
                     </div>
                 </div><!--/product-details-->
-                <div class="category-tab shop-details-tab"><!--category-tab-->
-                    <div class="col-sm-12">
-                        <ul class="nav nav-tabs">
-                            <li><a href="#details" data-toggle="tab">Details</a></li>
-                        </ul>
-                    </div>
-                    <div class="tab-content">
-                        <div class="tab-pane fade" id="details" >
-                            <div class="col-sm-12">
-                                <p><b>About {{$watchDetails->title}}</b></p>
-{{--                                <p>{{ $product->description }}</p>--}}
+            <div class="category-tab shop-details-tab"><!--category-tab-->
+                <div class="col-sm-12">
+                    <ul class="nav nav-tabs">
+                        <li><a href="#details" data-toggle="tab">Description</a></li>
+                        <li><a href="#companyprofile" data-toggle="tab">Additional Information</a></li>
+                        <li><a href="#tag" data-toggle="tab">Shipping & Returns</a></li>
+                        <li><a href="#reviews" data-toggle="tab">Guarantee</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="details" >
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery1.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery2.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery3.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery4.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div><!--/category-tab-->
+
+                    <div class="tab-pane fade" id="companyprofile" >
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery1.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery3.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery2.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery4.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tag" >
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery1.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery2.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery3.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/home/gallery4.jpg" alt="" />
+                                        <h2>$56</h2>
+                                        <p>Easy Polo Black Edition</p>
+                                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade active in" id="reviews" >
+                        <div class="col-sm-12">
+                            <ul>
+                                <li><a href=""><i class="fa fa-user"></i>EUGEN</a></li>
+                                <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
+                                <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
+                            </ul>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                            <p><b>Write Your Review</b></p>
+
+                            <form action="#">
+										<span>
+											<input type="text" placeholder="Your Name"/>
+											<input type="email" placeholder="Email Address"/>
+										</span>
+                                <textarea name="" ></textarea>
+                                <b>Rating: </b> <img src="images/product-details/rating.png" alt="" />
+                                <button type="button" class="btn btn-default pull-right">
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!--/category-tab-->
 
                 <div class="recommended_items"><!--recommended_items-->
                     <h2 class="title text-center">recommended items</h2>
 
                     <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
-{{--                            @foreach($products as $product)--}}
-{{--                                <div class="item @if($loop->first) active @endif">--}}
-{{--                                    @foreach($product as $data)--}}
-{{--                                        <div class="col-sm-4">--}}
-{{--                                            <div class="product-image-wrapper">--}}
-{{--                                                <div class="single-products">--}}
-{{--                                                    <div class="productinfo text-center">--}}
-{{--                                                        <img src="{{ asset($data['images']) }}" alt="" style="width: 200px; height: 180px;"/>--}}
-{{--                                                        <h2>$ {{ $data['price'] }}</h2>--}}
-{{--                                                        <p>{{ $data['name'] }}</p>--}}
-{{--                                                        <button type="button" class="btn btn-fefault cart" id="addToCart" value="cart" data-product-id="#">--}}
-{{--                                                            <i class="fa fa-shopping-cart"></i>Add to cart</button>--}}
-{{--                                                    </div>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    @endforeach--}}
-{{--                                </div>--}}
-{{--                            @endforeach--}}
+                            @foreach($watches as $watchesData)
+                                <div class="item @if($loop->first) active @endif">
+                                    @foreach($watchesData as $data)
+                                        <div class="col-sm-4">
+                                            <div class="product-image-wrapper">
+                                                <div class="single-products">
+                                                    <div class="productinfo text-center">
+                                                        <img src="{{ $data->image }}" alt="" style="width: 200px; height: 180px;"/>
+                                                        <h2>{{ $data->price }}</h2>
+                                                        <p>{{ $data->title }}</p>
+                                                        <button type="button" class="btn btn-fefault cart" id="addToCart" value="cart" data-product-id="#">
+                                                            <i class="fa fa-shopping-cart"></i>Add to cart</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
                         </div>
                         <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
                             <i class="fa fa-angle-left"></i>
