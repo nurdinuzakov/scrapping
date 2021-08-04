@@ -7,6 +7,7 @@ use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\LinksController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ScrappingController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomePageController::class, 'homePage'])->name('homePage');
 Route::get('/brand_models/{brand}', [ProductController::class, 'brandModels'])->name('brand.models');
+Route::get('/request/{value}', [ProductController::class, 'request'])->name('request');
 Route::get('/product-details/{product_id}', [ProductController::class, 'productDetails'])->name('product.details');
 Route::get('/product/{watch_id}', [ProductController::class, 'product'])->name('product');
 
@@ -33,3 +35,7 @@ Route::get('/gentleman_links', [LinksController::class, 'gentlemanCollectLinks']
 Route::get('/scrapping', [ScrappingController::class, 'scrapping'])->name('scrap');
 Route::get('/pride_scrapping', [ScrappingController::class, 'prideScrapping'])->name('pride.scrapping');
 Route::get('/gentleman_scrapping', [ScrappingController::class, 'gentlemanScrapping'])->name('gentleman.scrapping');
+
+Route::get('/cart', [CartController::class, 'cart'])->name('cart');
+Route::match(['get', 'post'],'/add/cart/{productId}', [CartController::class, 'addToCart'])->name('add.cart');
+Route::match(['get', 'post'],'/add/subtract/cart/{productId}', [CartController::class, 'addSubtractToCart'])->name('add.subtract.cart');

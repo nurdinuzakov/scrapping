@@ -27,7 +27,7 @@
                                             <div class="panel-body">
                                                 <ul>
                                                     @foreach($data as $value)
-                                                        <li><a href="#">{{$value}}</a></li>
+                                                        <li><a href="{{ route('request', ['value' => $value]) }}">{{$value}}</a></li>
                                                     @endforeach
                                                 </ul>
                                             </div>

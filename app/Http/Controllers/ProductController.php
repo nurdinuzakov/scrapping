@@ -48,7 +48,58 @@ class ProductController extends Controller
             ->get()
             ->toArray();
 
-        return view('product.product-details', ['watch' => $watch, 'images' => array_chunk($images, 3), 'watches' => array_chunk($watches, 3)]);
+        $sidebar = [];
+        $detailsData = Details::all();
+
+        $brands = $detailsData->pluck('signatures')->toArray();
+        $watchBrands = array_filter(array_unique($brands));
+
+        $data = [];
+
+        foreach ($watchBrands as $watchBrand) {
+            $data[$watchBrand] = trim($watchBrand);
+        }
+
+        $sidebar['Brands'] = $data;
+
+        $data = [];
+        $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Condition'] = $data;
+
+
+        $data = [];
+        $keys = ['Manual', 'Automatic', 'Quartz'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Movement'] = $data;
+
+        $data = [];
+        $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Band type'] = $data;
+
+        $data = [];
+        $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Case material'] = $data;
+
+        return view('product.product-details', ['sidebar' => $sidebar, 'watch' => $watch, 'images' => array_chunk($images, 3), 'watches' => array_chunk($watches, 3)]);
     }
 
     public function productDetails($product_id)
@@ -133,6 +184,71 @@ class ProductController extends Controller
         }
 
 //        dd($sidebar);
+
+        return view('product.products', compact('watches', 'sidebar'));
+    }
+
+    public function request($value)
+    {
+        $sidebar = [];
+        $detailsData = Details::all();
+
+        $brands = $detailsData->pluck('signatures')->toArray();
+        $watchBrands = array_filter(array_unique($brands));
+
+        $data = [];
+
+        foreach ($watchBrands as $watchBrand) {
+            $data[$watchBrand] = trim($watchBrand);
+        }
+
+        $sidebar['Brands'] = $data;
+
+        $data = [];
+        $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Condition'] = $data;
+
+
+        $data = [];
+        $keys = ['Manual', 'Automatic', 'Quartz'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Movement'] = $data;
+
+        $data = [];
+        $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Band type'] = $data;
+
+        $data = [];
+        $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Case material'] = $data;
+
+        $watches = DB::table('watches')
+            ->join('images', 'watches.id', '=', 'images.watch_id')
+            ->join('details', 'watches.id', '=', 'details.watch_id')
+            ->where('signatures', '=', $value)
+            ->orWhere('condition', '=', $value)
+            ->orWhere('movement', '=', $value)
+            ->orWhere('band_type', '=', $value)
+            ->paginate(15);
 
         return view('product.products', compact('watches', 'sidebar'));
     }

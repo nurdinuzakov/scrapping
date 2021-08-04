@@ -25,7 +25,7 @@
                                 <thead>
                                 <tr class="cart_menu">
                                     <td class="image">Item</td>
-                                    <td class="description">Name</td>
+                                    <td class="description">Title</td>
                                     <td class="price">Price</td>
                                     <td class="quantity">Quantity</td>
                                     <td class="total">Total</td>
@@ -36,14 +36,13 @@
                                 @foreach($products as $product_id => $product)
                                     <tr>
                                         <td class="cart_product">
-                                            <a href=""><img src="{{ $product["image"] }}" alt="" style="width: 250px"></a>
+                                            <p>Web ID: {{ $product['web_id'] }}</p>
                                         </td>
                                         <td class="cart_description">
-                                            <h4><a href="">{{ $product['name'] }}</a></h4>
-                                            <p>Web ID: 1089772</p>
+                                            <h4><a href="">{{ $product['title'] }}</a></h4>
                                         </td>
                                         <td class="cart_price">
-                                            <p id="product-price">$ {{ $product['price'] }}</p>
+                                            <p id="product-price"> {{ $product['price'] }}</p>
                                         </td>
                                         <td class="cart_quantity">
                                             <div class="cart_quantity_button">
@@ -53,7 +52,7 @@
                                             </div>
                                         </td>
                                         <td class="cart_total">
-                                            <p class="cart_total_price">$ {{ $product['quantity'] * $product['price'] }}</p>
+                                            <p class="cart_total_price">$ {{ $product['quantity'] * intval(str_replace(array(',', '$', '£'), '', $product['price'])) }}</p>
                                         </td>
                                         <td class="cart_delete">
                                             <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
