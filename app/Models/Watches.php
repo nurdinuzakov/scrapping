@@ -17,6 +17,6 @@ class Watches extends Model
 
     public function details()
     {
-        return $this->hasMany(Details::class, 'watch_id');
+        return $this->hasOne(Details::class, 'id');
     }
 }

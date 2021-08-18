@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Details;
+use Illuminate\Support\Facades\DB;
 
 class chernovik extends Controller
 {
@@ -127,5 +128,14 @@ class chernovik extends Controller
         $new_array = preg_replace($exampleArrays,'', array_change_key_case($data, CASE_LOWER));
         dd($new_array);
         $result = array_merge($array1, $array2);
+
+
+        $watches = DB::table('watches', 'w')
+            ->join('images AS i', 'watches.id', '=', 'images.watch_id')
+            ->join('details AS d', 'watches.id', '=', 'details.watch_id')
+            ->where('d.signatures', 'LIKE', '')
+            ->get();
     }
+
+
 }

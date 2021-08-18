@@ -3,7 +3,6 @@
 @section('title') Product Details | E-Shopper @endsection
 @section('content')
     <section>
-
         </div><!--/category-products-->
             <div class="container">
                 <div class="row">
@@ -12,7 +11,6 @@
                             <h2>Category</h2>
                             <div class="panel-group category-products" id="accordian"><!--category-productsr-->
                                 @foreach($sidebar as $key=>$data)
-{{--                                    {{dd($sidebar)}}--}}
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
@@ -35,21 +33,18 @@
                                     </div>
                                 @endforeach
                             </div><!--/category-products-->
-
-                        <div class="brands_products"><!--brands_products-->
-                            <h2>Brands</h2>
-                            <div class="brands-name">
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#"> <span class="pull-right">(50)</span>Acne</a></li>
-                                    <li><a href="#"> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-                                    <li><a href="#"> <span class="pull-right">(27)</span>Albiro</a></li>
-                                    <li><a href="#"> <span class="pull-right">(32)</span>Ronhill</a></li>
-                                    <li><a href="#"> <span class="pull-right">(5)</span>Oddmolly</a></li>
-                                    <li><a href="#"> <span class="pull-right">(9)</span>Boudestijn</a></li>
-                                    <li><a href="#"> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
-                                </ul>
-                            </div>
-                        </div><!--/brands_products-->
+                            @foreach($sidebar as $key=>$data)
+                                <div class="brands_id" data-category="{{$key}}"><!--brands_products-->
+                                    <h2>{{$key}}</h2>
+                                    @foreach($data as $value)
+                                        <div class="form-group">
+                                            <input type="checkbox" name="cat" class="form-check-input" data-value-id="{{ $value }}">
+                                            <label class="form-check-label" for="exampleCheck1">{{$value}}</label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                                <!--/brands_products-->
 
                         <div class="price-range"><!--price-range-->
                             <h2>Price Range</h2>
@@ -71,9 +66,9 @@
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-                                            <img src="{{ $watch->image }}" alt="" />
-                                            <h2>{{ $watch->price }} </h2>
-                                            <p>{{ $watch->title }}</p>
+                                            <img class="img" src="{{ $watch->image }}" alt="" />
+                                            <h2 class="price">{{ $watch->price }} </h2>
+                                            <p class="title">{{ $watch->title }}</p>
                                             <a href="{{ route('product', ['watch_id' => $watch->id]) }}" class="btn btn-default add-to-cart"><i
                                                     class="fa fa-shopping-cart"></i>Смотреть</a>
                                         </div>
@@ -105,5 +100,33 @@
 
                     $('#product-form').submit()
                 });
+
+
+            $('.form-check-input').on('click', function () {
+                let selected = new Array();
+
+                $("input:checkbox[name=cat]:checked").each(function() {
+                    let key = $(this).parent().parent().data('category');
+                    let value = $(this).data('value-id');
+                    let obj = {};
+                    obj[key] = value;
+                    selected.push(obj);
+                });
+               let stringSelected = JSON.stringify(selected)
+
+                let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
+
+                $.ajax({
+                    url: route.replace('stringSelectedToChange', stringSelected),
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function (data) {
+                        $(".features_items").html(data.html);
+                    }
+                });
+
+            })
         </script>
 @endsection

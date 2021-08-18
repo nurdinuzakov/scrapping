@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brands;
 use App\Models\Details;
 use App\Models\Gentleman_links;
 use App\Models\Links;
@@ -36,12 +37,13 @@ class ScrappingController extends Controller
 
             $item = [];
 
-            $item['title'] = data_get($Html->find('h1', 0), 'plaintext', 'Unknown title');
-            $item['webid'] = data_get($Html->find('div.web-id', 0), 'plaintext', '-');
-            $item['model'] = data_get($Html->find('div.model', 0), 'plaintext', '-');
-            $item['price'] = data_get($Html->find('span.price', 0), 'plaintext', '-');
-            $item['savings'] = data_get($Html->find('div.product-list-savings', 0), 'plaintext', '-');
-            $item['alsoKnown'] = data_get($Html->find('div.data', 0), 'plaintext', '-');
+            $item['title'] = data_get($Html->find('h1', 0), 'plaintext', 'Unknown title') ?? null;
+            $item['webid'] = data_get($Html->find('div.web-id', 0), 'plaintext', '-') ?? null;
+            $item['model'] = data_get($Html->find('div.model', 0), 'plaintext', '-') ?? null;
+            $item['price'] = data_get($Html->find('span.price', 0), 'plaintext', '-') ?? null;
+            $item['savings'] = data_get($Html->find('div.product-list-savings', 0), 'plaintext', '-') ?? null;
+            $item['alsoKnown'] = data_get($Html->find('div.data', 0), 'plaintext', '-') ?? null;
+
 
             Watches::insert([
                 'title' => $item['title'],
@@ -51,6 +53,7 @@ class ScrappingController extends Controller
                 'savings' => $item['savings'],
                 'also_known' => $item['alsoKnown'],
             ]);
+
 
             $images = [];
 
@@ -84,39 +87,65 @@ class ScrappingController extends Controller
             }
 
 
+            $reference = $addInfo['Reference Number'] ?? '-';
+            $also_known = $addInfo['Also Known'] ?? '-';
+            $band_type = $addInfo['Band Type'] ?? '-';
+            $bezel = $addInfo['Bezel'] ?? '-';
+            $caliber = $addInfo['Caliber'] ?? '-';
+            $case_back = $addInfo['Case Back'] ?? '-';
+            $case_material = $addInfo['Case Material'] ?? '-';
+            $case_size = $addInfo['Case Size'] ?? '-';
+            $clasp_type = $addInfo['Clasp Type'] ?? '-';
+            $condition = $addInfo['Condition'] ?? '-';
+            $crown = $addInfo['Crown'] ?? '-';
+            $dial_color = $addInfo['Dial Color'] ?? '-';
+            $watch_functions = $addInfo['Watch Functions'] ?? '-';
+            $gender = $addInfo['Gender'] ?? '-';
+            $included = $addInfo['Included'] ?? '-';
+            $lug_material = $addInfo['Lug Material'] ?? '-';
+            $movement = $addInfo['Movement'] ?? '-';
+            $power_reserve = $addInfo['Power Reserve'] ?? '-';
+            $power_reserve_unit = $addInfo['Power Reserve Unit'] ?? '-';
+            $signatures = $addInfo['Signatures'] ?? '-';
+            $strap_color = $addInfo['Strap Color'] ?? '-';
+            $discontinued = $addInfo['Discontinued'] ?? '-';
+            $limited_edition = $addInfo['Limited Edition'] ?? '-';
+            $gender = $addInfo['Gender'] ?? '-';
+
 
             Details::insert([
                 'watch_id' => $id,
-                'reference_number' => $addInfo['Reference Number'],
-                'also_known' => $addInfo['Also Known'],
-                'band_type' => $addInfo['Band Type'],
-                'bezel' => $addInfo['Bezel'],
-                'caliber' => $addInfo['Caliber'],
-                'case_back' => $addInfo['Case Back'],
-                'case_material' => $addInfo['Case Material'],
-                'case_size' => $addInfo['Case Size'],
-                'clasp_type' => $addInfo['Clasp Type'],
-                'condition' => $addInfo['Condition'],
-                'crown' => $addInfo['Crown'],
-                'dial_color' => $addInfo['Dial Color'],
-                'watch_functions' => $addInfo['Watch Functions'],
-                'gender' => $addInfo['Gender'],
-                'included' => $addInfo['Included'],
-                'lug_material' => $addInfo['Lug Material'],
-                'movement' => $addInfo['Movement'],
-                'power_reserve' => $addInfo['Power Reserve'],
-                'power_reserve_unit' => $addInfo['Power Reserve Unit'],
-                'signatures' => $addInfo['Signatures'],
-                'strap_color' => $addInfo['Strap Color'],
-                'discontinued' => $addInfo['Discontinued'],
-                'limited_edition' => $addInfo['Limited Edition'],
+                'reference_number' => $reference,
+                'also_known' => $also_known,
+                'band_type' => $band_type,
+                'bezel' => $bezel,
+                'caliber' => $caliber,
+                'case_back' => $case_back,
+                'case_material' => $case_material,
+                'case_size' => $case_size,
+                'clasp_type' => $clasp_type,
+                'condition' => $condition,
+                'crown' => $crown,
+                'dial_color' => $dial_color,
+                'watch_functions' => $watch_functions,
+                'gender' => $gender,
+                'included' => $included,
+                'lug_material' => $lug_material,
+                'movement' => $movement,
+                'power_reserve' => $power_reserve,
+                'power_reserve_unit' => $power_reserve_unit,
+                'signatures' => $signatures,
+                'strap_color' => $strap_color,
+                'discontinued' => $discontinued,
+                'limited_edition' => $limited_edition,
+                'gender' => $gender,
             ]);
         }
     }
 
     public function prideScrapping()
     {
-        set_time_limit(250);
+        set_time_limit(450);
 
         $links = Pride_links::pluck('href')->toArray();
 
@@ -245,7 +274,6 @@ class ScrappingController extends Controller
             $url = ('https://thetimepiecegentleman.com' . $link);
             $getUrl = getUrl($url);
             $doc = new HtmlDocument();
-            $doc = new HtmlDocument();
             $html = $doc->load($getUrl);
 
 
@@ -328,6 +356,22 @@ class ScrappingController extends Controller
             ));
         }
         dd('Gentleman data\'s where successfully collected!');
+    }
+
+    public function brands()
+    {
+        $brands = Details::pluck('signatures')->toArray();
+        $selectedBrands = array_filter(array_unique($brands));
+
+        $i = 0;
+        foreach ($selectedBrands as $selectedBrand){
+            $i++;
+            Brands::insert(array(
+                'id' => $i,
+                'brands' => $selectedBrand,
+            ));
+        }
+        dd('Done!!!');
     }
 }
 

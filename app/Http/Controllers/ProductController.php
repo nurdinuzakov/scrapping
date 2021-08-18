@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Brands;
 use App\Models\Category;
 use App\Models\Details;
 use App\Models\Images;
@@ -99,6 +100,15 @@ class ProductController extends Controller
 
         $sidebar['Case material'] = $data;
 
+        $data = [];
+        $keys = ['Women', 'Men', 'Unisex'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Gender'] = $data;
+
         return view('product.product-details', ['sidebar' => $sidebar, 'watch' => $watch, 'images' => array_chunk($images, 3), 'watches' => array_chunk($watches, 3)]);
     }
 
@@ -173,6 +183,15 @@ class ProductController extends Controller
 
         $sidebar['Case material'] = $data;
 
+        $data = [];
+        $keys = ['Women', 'Men', 'Unisex'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Gender'] = $data;
+
         $watches = DB::table('watches')
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
@@ -241,24 +260,75 @@ class ProductController extends Controller
 
         $sidebar['Case material'] = $data;
 
+        $data = [];
+        $keys = ['Women', 'Men', 'Unisex'];
+
+        foreach ($keys as $key){
+            $data[$key] = $key;
+        }
+
+        $sidebar['Gender'] = $data;
+
         $watches = DB::table('watches')
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
-            ->where('signatures', '=', $value)
-            ->orWhere('condition', '=', $value)
-            ->orWhere('movement', '=', $value)
-            ->orWhere('band_type', '=', $value)
+            ->where('signatures', 'LIKE', '%'.$value.'%')
+            ->orWhere('condition', 'LIKE', '%'.$value.'%')
+            ->orWhere('movement', 'LIKE', '%'.$value.'%')
+            ->orWhere('band_type','LIKE', '%'.$value.'%')
+            ->orWhere('gender','LIKE', '%'.$value.'%')
             ->paginate(15);
 
         return view('product.products', compact('watches', 'sidebar'));
     }
 
-    public function adminProductTable()
+    public function filters($selected)
     {
-        $products = Products::paginate(15);
+        $jsons = json_decode($selected, true);
+        foreach ($jsons as $json){
+//            dd($jsons);
+            foreach ($json as $key => $value){
+                if ($key == 'Brands'){
+                    $query = Details::orWhere('signatures', '=', $value)->with('images','watch');
+                }
 
-        return view('admin.product-table', ['products' => $products]);
+                if ($key == 'Condition'){
+                    $query = $query->orWhere('condition', 'LIKE', '%'.$value.'%');
+                }
+
+                if ($key == 'Movement'){
+                    $query = $query->orWhere('movement', 'LIKE', '%'.$value.'%');
+                }
+
+                if ($key == 'Band type'){
+                    $query = $query->orWhere('band_type', 'LIKE', '%'.$value.'%');
+                }
+
+                if ($key == 'Case material'){
+                    $query = $query->orWhere('case_material', 'LIKE', '%'.$value.'%');
+                }
+
+                if ($key == 'Gender'){
+                    $query = $query->orWhere('gender', 'LIKE', '%'.$value.'%');
+                }
+            }
+        }
+
+
+        $watches = $query ? $query->paginate() : [];
+        if(!$watches) {
+            abort(404);
+        }
+//        dd($watches[0]->watch->title);
+
+
+//       return  view('product.watch',compact('watches'));
+
+        $returnHTML = view('product.watch')->with('watches', $watches)->render();
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
+
     }
+
 
     public function productInput()
     {
