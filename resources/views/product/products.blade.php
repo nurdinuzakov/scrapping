@@ -25,7 +25,9 @@
                                             <div class="panel-body">
                                                 <ul>
                                                     @foreach($data as $value)
-                                                        <li><a href="{{ route('request', ['value' => $value]) }}">{{$value}}</a></li>
+                                                        <li>
+                                                            <a href="{{ route('request', ['value' => $value]) }}">{{$value}}</a>
+                                                        </li>
                                                     @endforeach
                                                 </ul>
                                             </div>
@@ -34,17 +36,18 @@
                                 @endforeach
                             </div><!--/category-products-->
                             @foreach($sidebar as $key=>$data)
-                                <div class="brands_id" data-category="{{$key}}"><!--brands_products-->
+                                <div class="{{$key}}" data-category="{{$key}}"><!--brands_products-->
                                     <h2>{{$key}}</h2>
                                     @foreach($data as $value)
                                         <div class="form-group">
-                                            <input type="checkbox" name="cat" class="form-check-input" data-value-id="{{ $value }}">
+                                            <input type="checkbox" name="cat" class="form-check-input"
+                                                   data-value-id="{{ $value }}">
                                             <label class="form-check-label" for="exampleCheck1">{{$value}}</label>
                                         </div>
                                     @endforeach
                                 </div>
-                            @endforeach
-                                <!--/brands_products-->
+                        @endforeach
+                        <!--/brands_products-->
 
                         <div class="price-range"><!--price-range-->
                             <h2>Price Range</h2>
@@ -92,29 +95,37 @@
 @endsection
 
 @section('script')
-        <script type="text/javascript">
-            $('#sl2').slider()
-                .on('slideStop', function(ev){
-                    $('input[name="min_price"]').val(ev.value[0])
-                    $('input[name="max_price"]').val(ev.value[1])
+    <script type="text/javascript">
+        $('#sl2').slider()
+            .on('slideStop', function (ev) {
+                $('input[name="min_price"]').val(ev.value[0])
+                $('input[name="max_price"]').val(ev.value[1])
 
-                    $('#product-form').submit()
-                });
+                $('#product-form').submit()
+            });
 
 
-            $('.form-check-input').on('click', function () {
-                let selected = new Array();
+        $('.form-check-input').on('change', function () {
+            let selected = [];
+            selected['Brands'] = [];
+            selected['Condition'] = [];
+            selected['Movement'] = [];
+            selected['Band type'] = [];
+            selected['Case material'] = [];
+            selected['Gender'] = [];
 
-                $("input:checkbox[name=cat]:checked").each(function() {
-                    let key = $(this).parent().parent().data('category');
-                    let value = $(this).data('value-id');
-                    let obj = {};
-                    obj[key] = value;
-                    selected.push(obj);
-                });
-               let stringSelected = JSON.stringify(selected)
 
-                let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
+            $("input:checkbox[name=cat]:checked").each(function () {
+                let key = $(this).parent().parent().data('category');
+                let value = $(this).data('value-id');
+                console.log(value)
+                console.log(key)
+                selected[key].push(value);
+            });
+            console.log(selected)
+            let stringSelected = JSON.stringify(selected)
+
+            let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
 
                 $.ajax({
                     url: route.replace('stringSelectedToChange', stringSelected),

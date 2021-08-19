@@ -285,31 +285,46 @@ class ProductController extends Controller
     public function filters($selected)
     {
         $jsons = json_decode($selected, true);
-        foreach ($jsons as $json){
-//            dd($jsons);
-            foreach ($json as $key => $value){
-                if ($key == 'Brands'){
-                    $query = Details::orWhere('signatures', '=', $value)->with('images','watch');
+
+        $s = array_merge($jsons);
+        dd($s);
+
+        $sorted = [];
+
+        foreach ($jsons as $json) {
+            foreach ($json as $key => $value) {
+                $sorted [$key] = $value;
+            }
+        }
+
+        dd($sorted);
+
+        foreach ($jsons as $json) {
+            foreach ($json as $key => $value) {
+
+                $query = Details::from('details')->with('images', 'watch');
+                if ($key == 'Brands') {
+                    $query = $query->whereIn($key, [150, 200]);
                 }
 
-                if ($key == 'Condition'){
-                    $query = $query->orWhere('condition', 'LIKE', '%'.$value.'%');
+                if ($key == 'Condition') {
+                    $query = $query->where('condition', 'LIKE', '%' . $value . '%');
                 }
 
-                if ($key == 'Movement'){
-                    $query = $query->orWhere('movement', 'LIKE', '%'.$value.'%');
+                if ($key == 'Movement') {
+                    $query = $query->where('movement', 'LIKE', '%' . $value . '%');
                 }
 
                 if ($key == 'Band type'){
-                    $query = $query->orWhere('band_type', 'LIKE', '%'.$value.'%');
+                    $query = $query->where('band_type', 'LIKE', '%' . $value . '%');
                 }
 
                 if ($key == 'Case material'){
-                    $query = $query->orWhere('case_material', 'LIKE', '%'.$value.'%');
+                    $query = $query->where('case_material', 'LIKE', '%' . $value . '%');
                 }
 
                 if ($key == 'Gender'){
-                    $query = $query->orWhere('gender', 'LIKE', '%'.$value.'%');
+                    $query = $query->where('gender', 'LIKE', '%' . $value . '%');
                 }
             }
         }

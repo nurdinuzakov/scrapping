@@ -2,17 +2,18 @@
     <div class="features_items"><!--features_items-->
         <h2 class="title text-center">Features Items</h2>
         @foreach($watches as $watch)
-            {{dump($watch)}}
-            {{dd($watch->id)}}
+            {{--            {{dump($watch)}}--}}
+            {{--            {{dd($watch->id)}}--}}
             <div class="col-sm-4">
                 <a href="{{ route('product', ['watch_id' => $watch->id]) }}">
                     <div class="product-image-wrapper">
                         <div class="single-products">
                             <div class="productinfo text-center">
-                                <img class="img" src="{{ $watch->images[0]['image'] }}" alt="" />
+                                <img class="img" src="{{ $watch->images[0]['image'] }}" alt=""/>
                                 <h2 class="price">{{ $watch->watch->price }} </h2>
                                 <p class="title">{{ $watch->watch->title }}</p>
-                                <a href="{{ route('product', ['watch_id' => $watch->id]) }}" class="btn btn-default add-to-cart"><i
+                                <a href="{{ route('product', ['watch_id' => $watch->id]) }}"
+                                   class="btn btn-default add-to-cart"><i
                                         class="fa fa-shopping-cart"></i>Смотреть</a>
                             </div>
                         </div>
