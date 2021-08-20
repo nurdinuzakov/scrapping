@@ -285,53 +285,114 @@ class ProductController extends Controller
     public function filters($selected)
     {
         $jsons = json_decode($selected, true);
+//        dd($jsons);
 
-        $s = array_merge($jsons);
-        dd($s);
+//        dump($jsons[0]['Brands']);
 
-        $sorted = [];
-
-        foreach ($jsons as $json) {
-            foreach ($json as $key => $value) {
-                $sorted [$key] = $value;
-            }
-        }
-
-        dd($sorted);
+        $brands = [];
+        $condition = [];
+        $movement = [];
+        $band_type = [];
+        $gender = [];
+        $case_material = [];
 
         foreach ($jsons as $json) {
             foreach ($json as $key => $value) {
-
-                $query = Details::from('details')->with('images', 'watch');
-                if ($key == 'Brands') {
-                    $query = $query->whereIn($key, [150, 200]);
+                if ('Brands' == $key) {
+                    $brands = Arr::prepend($brands, $value);
                 }
-
-                if ($key == 'Condition') {
-                    $query = $query->where('condition', 'LIKE', '%' . $value . '%');
+                if ('Condition' == $key) {
+                    $condition = Arr::prepend($condition, $value);
                 }
-
-                if ($key == 'Movement') {
-                    $query = $query->where('movement', 'LIKE', '%' . $value . '%');
+                if ('Movement' == $key) {
+                    $movement = Arr::prepend($movement, $value);
                 }
-
-                if ($key == 'Band type'){
-                    $query = $query->where('band_type', 'LIKE', '%' . $value . '%');
+                if ('Band type' == $key) {
+                    $band_type = Arr::prepend($band_type, $value);
                 }
-
-                if ($key == 'Case material'){
-                    $query = $query->where('case_material', 'LIKE', '%' . $value . '%');
+                if ('Gender' == $key) {
+                    $gender = Arr::prepend($gender, $value);
                 }
-
-                if ($key == 'Gender'){
-                    $query = $query->where('gender', 'LIKE', '%' . $value . '%');
+                if ('Case material' == $key) {
+                    $case_material = Arr::prepend($case_material, $value);
                 }
             }
         }
 
+
+        $query = Details::from('details')->with('images', 'watch');
+
+
+        if (!$brands == []) {
+            $query = $query->whereIn('signatures', $brands);
+        }
+
+        if (!$condition == []) {
+            $query = $query->whereIn('condition', $condition);
+        }
+
+        if (!$movement == []) {
+            $query = $query->whereIn('movement', $movement);
+        }
+
+        if (!$band_type == []) {
+            $query = $query->whereIn('band_type', $band_type);
+        }
+
+        if (!$gender == []) {
+            $query = $query->whereIn('gender', $gender);
+        }
+
+        if (!$case_material == []) {
+            $query = $query->whereIn('case_material', $case_material);
+        }
 
         $watches = $query ? $query->paginate() : [];
-        if(!$watches) {
+
+//        dd($watches);
+//
+//        dump($band_type);
+//        dump($movement);
+//        dump($gender);
+//        dump($case_material);
+//        dd($condition);
+
+
+//        foreach ($jsons as $json){
+//            dump($jsons);
+//            foreach ($json as $key => $value){
+//
+//                $query = Details::from('details')->with('images','watch');
+//                if ($key == 'Brands'){
+//                    $query = $query->whereIn($key, [150, 200]);
+//                }
+//
+//
+//
+//                if ($key == 'Condition'){
+//                    $query = $query->where('condition', 'LIKE', '%'.$value.'%');
+//                }
+//
+//                if ($key == 'Movement'){
+//                    $query = $query->where('movement', 'LIKE', '%'.$value.'%');
+//                }
+//
+//                if ($key == 'Band type'){
+//                    $query = $query->where('band_type', 'LIKE', '%'.$value.'%');
+//                }
+//
+//                if ($key == 'Case material'){
+//                    $query = $query->where('case_material', 'LIKE', '%'.$value.'%');
+//                }
+//
+//                if ($key == 'Gender'){
+//                    $query = $query->where('gender', 'LIKE', '%'.$value.'%');
+//                }
+//            }
+//        }
+
+
+        if (!$watches) {
             abort(404);
         }
 //        dd($watches[0]->watch->title);
