@@ -358,6 +358,7 @@ class ProductController extends Controller
 //        dd($condition);
 
 
+
 //        foreach ($jsons as $json){
 //            dump($jsons);
 //            foreach ($json as $key => $value){
@@ -401,7 +402,7 @@ class ProductController extends Controller
 //       return  view('product.watch',compact('watches'));
 
         $returnHTML = view('product.watch')->with('watches', $watches)->render();
-        return response()->json(array('success' => true, 'html'=>$returnHTML));
+        return response()->json(array('success' => true, 'html' => $returnHTML));
 
     }
 
