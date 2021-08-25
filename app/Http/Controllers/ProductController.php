@@ -285,7 +285,7 @@ class ProductController extends Controller
     public function filters($selected)
     {
         $jsons = json_decode($selected, true);
-//        dd($jsons);
+        dd($jsons);
 
 //        dump($jsons[0]['Brands']);
 
@@ -396,10 +396,6 @@ class ProductController extends Controller
         if (!$watches) {
             abort(404);
         }
-//        dd($watches[0]->watch->title);
-
-
-//       return  view('product.watch',compact('watches'));
 
         $returnHTML = view('product.watch')->with('watches', $watches)->render();
         return response()->json(array('success' => true, 'html' => $returnHTML));

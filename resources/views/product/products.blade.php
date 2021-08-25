@@ -2,6 +2,11 @@
 
 @section('title') Product Details | E-Shopper @endsection
 @section('content')
+    <style>
+        div.panel-body div:nth-child(n+7) {
+            display: none;
+        }
+    </style>
     <section>
         </div><!--/category-products-->
         <div class="container">
@@ -12,7 +17,7 @@
                         <div class="panel-group category-products" id="accordian"><!--category-productsr-->
                             @foreach($sidebar as $key=>$data)
                                 <div class="panel panel-default">
-                                    <div class="panel-heading" data-category="{{$key}}">
+                                    <div class="panel-heading">
                                         <h4 class="panel-title">
                                             <a data-toggle="collapse" data-parent="#accordian"
                                                href="#{{'category_' . $newKey = str_replace(" ", "", $key)}}">
@@ -23,26 +28,18 @@
                                     </div>
                                     <div id="{{ 'category_' . $newKey = str_replace(" ", "", $key) }}"
                                          class="panel-collapse collapse">
-                                        <div id="masterdiv" class="panel-body">
+                                        <div class="panel-body">
                                             @foreach($data as $value)
-                                                @if(count($data) < 8)
-                                                    <div class="form-group full-width" style="display: block">
-                                                        <input type="checkbox" name="cat" class="form-check-input"
-                                                               data-value-id="{{ $value }}">
-                                                        <label class="form-check-label"
-                                                               for="exampleCheck1">{{$value}}</label>
-                                                    </div>
-                                                @else
-                                                    <div class="form-group full-width" style="display: none">
-                                                        <input type="checkbox" name="cat" class="form-check-input"
-                                                               data-value-id="{{ $value }}">
-                                                        <label class="form-check-label"
-                                                               for="exampleCheck1">{{$value}}</label>
-                                                    </div>
-                                                @endif
+                                                <div class="form-group full-width" data-category="{{$key}}">
+                                                    <input type="checkbox" name="filters" class="form-check-input"
+                                                           data-value-id="{{ $value }}">
+                                                    <label class="form-check-label"
+                                                           for="exampleCheck1">{{$value}}</label>
+                                                </div>
                                             @endforeach
                                             @if(count($data) > 8)
                                                 <a class="see-more"><span>See more</span></a>
+                                                <a class="see-less hide"><span>See Less</span></a>
                                             @endif
                                         </div>
                                     </div>
@@ -110,61 +107,68 @@
                 $('#product-form').submit()
             });
 
-        let panel = $('div.panel-body').closest('div').children().length;
-        console.log(panel);
-
         $(function () {
             $('.see-more').click(function () {
-                $('#datalist li:hidden').slice(0, 2).show();
-                if ($('#datalist li').length == $('#datalist li:visible').length) {
-                    $('span ').hide();
+                $('.panel-body div:hidden').slice(0, 6).show();
+                if ($('#category_Brands div').length - 1 == $('.panel-body div:visible').length) {
+                    $('.see-more').hide();
+                    $('.see-less').show();
                 }
             });
         });
 
-        // if( $('div.panel-body).closest( "div" ).length){
-        //     $('a.see-more').css('display', 'block');
-        // }
-        // let panel = document.querySelectorAll('.panel-body')
-        // for (let i = 0; i < panel.length; i++) {
-        //     if($(panel[i]).children().length > 7) {
-        //         $('a').addClass('show');
-        //         $('a').removeClass('hidden');
-        //     }
-        // }
+        $('input[type=checkbox]').change(function () {
+            let selected;
 
-        // let first = $( ".panel-body:first-child" );
-        // console.log(first);
-        // let selector = $(".panel-collapse").attr('id');
-        // $( "#" + selector ).click(function() {
-        //     $( "#target" ).slice(first, 4).style("show");
-        // });
+            if (this.checked) {
+                let checked = new Array();
+                $("input:checkbox[name=filters]:checked").each(function () {
+                    let key = $(this).parent().data('category');
+                    let value = $(this).data('value-id');
+                    let obj = {};
+                    obj[key] = value;
+                    checked.push(obj);
+                });
+                selected = checked;
+                let stringSelected = JSON.stringify(selected)
 
-        $('.form-check-input').on('change', function () {
-            let selected = new Array();
+                let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
 
-            $("input:checkbox[name=cat]:checked").each(function () {
-                let key = $(this).parent().parent().data('category');
-                let value = $(this).data('value-id');
-                let obj = {};
-                obj[key] = value;
-                selected.push(obj);
-            });
-            let stringSelected = JSON.stringify(selected)
+                $.ajax({
+                    url: route.replace('stringSelectedToChange', stringSelected),
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function (data) {
+                        $(".features_items").html(data.html);
+                    }
+                });
+            } else {
+                let checked = new Array();
+                $("input:checkbox[name=filters]:checked").each(function () {
+                    let key = $(this).parent().data('category');
+                    let value = $(this).data('value-id');
+                    let obj = {};
+                    obj[key] = value;
+                    checked.push(obj);
+                });
+                selected = checked;
+                let stringSelected = JSON.stringify(selected)
 
-            let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
+                let route = "{{ route('filters', ['stringSelected' => 'stringSelectedToChange']) }}";
 
-            $.ajax({
-                url: route.replace('stringSelectedToChange', stringSelected),
-                type: "POST",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                },
-                success: function (data) {
-                    $(".features_items").html(data.html);
-                }
-            });
-
-        })
+                $.ajax({
+                    url: route.replace('stringSelectedToChange', stringSelected),
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function (data) {
+                        $(".features_items").html(data.html);
+                    }
+                });
+            }
+        });
     </script>
 @endsection
