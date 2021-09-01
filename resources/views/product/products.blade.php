@@ -117,7 +117,7 @@
             });
         });
 
-        $('input[type=checkbox]').change(function () {
+        $(document).on('change', 'input[type=checkbox]', function () {
             let selected;
 
             if (this.checked) {
@@ -142,6 +142,7 @@
                     },
                     success: function (data) {
                         $(".features_items").html(data.html);
+                        $("#accordian").html(data.htmlSidebar);
                     }
                 });
             } else {
@@ -166,9 +167,11 @@
                     },
                     success: function (data) {
                         $(".features_items").html(data.html);
+                        $("#accordian").html(data.htmlSidebar);
                     }
                 });
             }
-        });
+        })
+
     </script>
 @endsection

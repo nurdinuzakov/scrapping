@@ -141,7 +141,7 @@ class ProductController extends Controller
         $data = [];
 
         foreach ($watchBrands as $watchBrand) {
-                $data[$watchBrand] = trim($watchBrand);
+                $data[trim($watchBrand)] = trim($watchBrand);
         }
 
         $sidebar['Brands'] = $data;
@@ -285,9 +285,8 @@ class ProductController extends Controller
     public function filters($selected)
     {
         $jsons = json_decode($selected, true);
-        dd($jsons);
 
-//        dump($jsons[0]['Brands']);
+//        dump($jsons);
 
         $brands = [];
         $condition = [];
@@ -349,62 +348,75 @@ class ProductController extends Controller
 
         $watches = $query ? $query->paginate() : [];
 
-//        dd($watches);
-//
-//        dump($band_type);
-//        dump($movement);
-//        dump($gender);
-//        dump($case_material);
-//        dd($condition);
+        $sidebar = [];
+        $brands = Details::pluck('signatures')->toArray();
+        $watchBrands = array_filter(array_unique($brands));
+
+        $data = [];
+
+        foreach ($watchBrands as $watchBrand) {
+            $data[trim($watchBrand)] = trim($watchBrand);
+        }
+
+        $sidebar['Brands'] = $data;
+
+        $lookFrom = $query ? $query->get() : [];
+
+        $condition = [];
+        $movement = [];
+        $band_type = [];
+        $case_material = [];
+        $gender = [];
 
 
+        foreach ($lookFrom as $value) {
+            if ($value->condition == 'N/A') {
+                continue;
+            }
+            $condition[] = $value->condition;
+        }
+        $sidebar['Condition'] = array_unique($condition);
 
-//        foreach ($jsons as $json){
-//            dump($jsons);
-//            foreach ($json as $key => $value){
-//
-//                $query = Details::from('details')->with('images','watch');
-//                if ($key == 'Brands'){
-//                    $query = $query->whereIn($key, [150, 200]);
-//                }
-//
-//
-//
-//                if ($key == 'Condition'){
-//                    $query = $query->where('condition', 'LIKE', '%'.$value.'%');
-//                }
-//
-//                if ($key == 'Movement'){
-//                    $query = $query->where('movement', 'LIKE', '%'.$value.'%');
-//                }
-//
-//                if ($key == 'Band type'){
-//                    $query = $query->where('band_type', 'LIKE', '%'.$value.'%');
-//                }
-//
-//                if ($key == 'Case material'){
-//                    $query = $query->where('case_material', 'LIKE', '%'.$value.'%');
-//                }
-//
-//                if ($key == 'Gender'){
-//                    $query = $query->where('gender', 'LIKE', '%'.$value.'%');
-//                }
-//            }
-//        }
+        foreach ($lookFrom as $value) {
+            if ($value->movement == 'N/A') {
+                continue;
+            }
+            $movement[] = $value->movement;
+        }
+        $sidebar['Movement'] = array_unique($movement);
 
+        foreach ($lookFrom as $value) {
+            if ($value->band_type == 'N/A') {
+                continue;
+            }
+            $band_type[] = $value->band_type;
+        }
+        $sidebar['Band type'] = array_unique($band_type);
+
+        foreach ($lookFrom as $value) {
+            if ($value->case_material == 'N/A') {
+                continue;
+            }
+            $case_material[] = $value->case_material;
+        }
+        $sidebar['Case material'] = array_unique($case_material);
+
+        foreach ($lookFrom as $value) {
+            if ($value->gender == 'N/A') {
+                continue;
+            }
+            $gender[] = $value->gender;
+        }
+        $sidebar['Gender'] = array_unique($gender);
 
         if (!$watches) {
             abort(404);
         }
+//        dd($sidebar);
 
-        $returnHTML = view('product.watch')->with('watches', $watches)->render();
-        return response()->json(array('success' => true, 'html' => $returnHTML));
+        $watchHTML = view('product.watch')->with('watches', $watches)->render();
+        $sidebarHTML = view('product.sidebar')->with(compact('sidebar', 'jsons'))->render();
+        return response()->json(array('success' => true, 'html' => $watchHTML, 'htmlSidebar' => $sidebarHTML));
 
-    }
-
-
-    public function productInput()
-    {
-        return view('admin.product-input');
     }
 }
