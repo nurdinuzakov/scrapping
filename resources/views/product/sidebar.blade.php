@@ -14,17 +14,17 @@
             <div class="panel-body">
                 @foreach($data as $value)
                     <div class="form-group full-width" data-category="{{$key1}}">
-                        @foreach($jsons as $json)
-                            @foreach($json as $key=>$item)
-                                <input type="checkbox" name="filters" class="form-check-input"
-                                       @if($item == $value and $key1 == $key)
-                                       checked='checked'
-                                       @endif
-                                       data-value-id="{{ $value }}">
-                                <label class="form-check-label"
-                                       for="exampleCheck1">{{$value}}</label>
-                            @endforeach
-                        @endforeach
+                        <input type="checkbox" name="filters" class="form-check-input"
+                               @foreach($jsons as $json)
+                               @foreach($json as $key=>$item)
+                               @if($item == $value and $key1 == $key)
+                               checked='checked'
+                               @endif
+                               @endforeach
+                               @endforeach
+                               data-value-id="{{ $value }}">
+                        <label class="form-check-label"
+                               for="exampleCheck1">{{$value}}</label>
                     </div>
                 @endforeach
                 @if(count($data) > 8)

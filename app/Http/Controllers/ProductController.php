@@ -15,6 +15,7 @@ use App\Models\ProductVariants;
 use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\Subcategory;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use function PHPUnit\Framework\throwException;
 use Illuminate\Support\Arr;
@@ -282,11 +283,19 @@ class ProductController extends Controller
         return view('product.products', compact('watches', 'sidebar'));
     }
 
-    public function filters($selected)
+    public function filters($stringSelected)
     {
-        $jsons = json_decode($selected, true);
+        $jsons = json_decode($stringSelected, true);
 
-//        dump($jsons);
+//        dd($jsons);
+
+
+//        session_start();
+//        $_SESSION['sessionJsons'] = $jsons;
+//
+//        $sessionJsons = $_SESSION['sessionJsons'];
+//
+//        dd($sessionJsons);
 
         $brands = [];
         $condition = [];

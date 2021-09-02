@@ -63,7 +63,7 @@
                 </div>
 
                 <div class="col-sm-9 padding-right">
-                    <div class="features_items"><!--features_items-->
+                    <div class="features_items" id="replace"><!--features_items-->
                         <h2 class="title text-center">Features Items</h2>
                         @foreach($watches as $watch)
                             <div class="col-sm-4">
@@ -72,7 +72,7 @@
                                         <div class="single-products">
                                             <div class="productinfo text-center">
                                                 <img class="img" src="{{ $watch->image }}" alt=""/>
-                                                <h2 class="price">${{ $watch->price }} </h2>
+                                                <h2 class="price">{{ $watch->price }} </h2>
                                                 <p class="title">{{ $watch->title }}</p>
                                                 <a href="{{ route('product', ['watch_id' => $watch->id]) }}"
                                                    class="btn btn-default add-to-cart"><i
@@ -141,7 +141,7 @@
                         _token: '{{ csrf_token() }}',
                     },
                     success: function (data) {
-                        $(".features_items").html(data.html);
+                        $("#replace").html(data.html);
                         $("#accordian").html(data.htmlSidebar);
                     }
                 });
@@ -166,7 +166,7 @@
                         _token: '{{ csrf_token() }}',
                     },
                     success: function (data) {
-                        $(".features_items").html(data.html);
+                        $("#replace").html(data.html);
                         $("#accordian").html(data.htmlSidebar);
                     }
                 });
