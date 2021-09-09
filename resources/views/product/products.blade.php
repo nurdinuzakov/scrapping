@@ -57,13 +57,19 @@
                                      id="sl2"></div>
                                 <br/>
                                 <b>$ 0</b> <b class="pull-right">$ 600</b>
+                                <div class="span2" value="" data-slider-min="600" data-slider-max="2000"
+                                     data-slider-step="6"
+                                     data-slider-value="[{{ request('min_price', 0) }},{{ request('max_price', 600) }}]"
+                                     id="sl3"></div>
+                                <br/>
+                                <b>$ 600</b> <b class="pull-right">$ 2000</b>
                             </div>
                         </div><!--/price-range-->
                     </div>
                 </div>
 
                 <div class="col-sm-9 padding-right">
-                    <div class="features_items" id="replace"><!--features_items-->
+                    <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">Features Items</h2>
                         @foreach($watches as $watch)
                             <div class="col-sm-4">
@@ -72,8 +78,8 @@
                                         <div class="single-products">
                                             <div class="productinfo text-center">
                                                 <img class="img" src="{{ $watch->image }}" alt=""/>
-                                                <h2 class="price">{{ $watch->price }} </h2>
-                                                <p class="title">{{ $watch->title }}</p>
+                                                <h2 class="price">{{ $price = (substr( $watch->price, 0) !== "$,£") ? "$". $watch->price: $watch->price }} </h2>
+                                                <p class="title">{{ substr($watch->title, 0, 30) . (strlen($watch->title) > 30 ? '...' : '') }}</p>
                                                 <a href="{{ route('product', ['watch_id' => $watch->id]) }}"
                                                    class="btn btn-default add-to-cart"><i
                                                         class="fa fa-shopping-cart"></i>Смотреть</a>
@@ -107,7 +113,7 @@
                 $('#product-form').submit()
             });
 
-        $(function () {
+        $(document).on('change', function () {
             $('.see-more').click(function () {
                 $('.panel-body div:hidden').slice(0, 6).show();
                 if ($('#category_Brands div').length - 1 == $('.panel-body div:visible').length) {
@@ -141,7 +147,7 @@
                         _token: '{{ csrf_token() }}',
                     },
                     success: function (data) {
-                        $("#replace").html(data.html);
+                        $(".features_items").html(data.html);
                         $("#accordian").html(data.htmlSidebar);
                     }
                 });
@@ -166,7 +172,7 @@
                         _token: '{{ csrf_token() }}',
                     },
                     success: function (data) {
-                        $("#replace").html(data.html);
+                        $(".features_items").html(data.html);
                         $("#accordian").html(data.htmlSidebar);
                     }
                 });

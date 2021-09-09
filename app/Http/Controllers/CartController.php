@@ -67,6 +67,7 @@ class CartController extends Controller
             "web_id" => $product->web_id
         ];
         session()->put('cart', $cart);
+
         return response()->json(['success' => true, 'message' => 'Product added to cart successfully!',
             'productCount' => count($cart)]);
 

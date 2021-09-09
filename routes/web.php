@@ -5,6 +5,7 @@ use App\Http\Controllers\CollectPrideLinksController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\LinksController;
+use App\Http\Controllers\PaginationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ScrappingController;
 use App\Http\Controllers\CartController;
@@ -38,11 +39,14 @@ Route::get('/gentleman_scrapping', [ScrappingController::class, 'gentlemanScrapp
 Route::get('/brands_table', [ScrappingController::class, 'brands'])->name('brands.table');
 
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
-Route::match(['get', 'post'],'/add/cart/{productId}', [CartController::class, 'addToCart'])->name('add.cart');
-Route::match(['get', 'post'],'/add/subtract/cart/{productId}', [CartController::class, 'addSubtractToCart'])->name('add.subtract.cart');
+Route::match(['get', 'post'], '/add/cart/{productId}', [CartController::class, 'addToCart'])->name('add.cart');
+Route::match(['get', 'post'], '/add/subtract/cart/{productId}', [CartController::class, 'addSubtractToCart'])->name('add.subtract.cart');
 
-Route::match(['get', 'post'],'/filters/{stringSelected}', [ProductController::class, 'filters'])->name('filters');
+Route::match(['get', 'post'], '/filters/{stringSelected}', [ProductController::class, 'filters'])->name('filters');
 
 Route::get('/ajaxRequest/{watches}', [HomeController::class, 'watches']);
 Route::post('/ajaxRequest', [HomeController::class, 'watches'])->name('ajaxRequest.post');
+
+
+//Route::get('/paginate/{watches}', [PaginationController::class, 'index'])->name('paginate');
 

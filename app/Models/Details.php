@@ -16,14 +16,9 @@ class Details extends Model
 {
     public $table = 'details';
 
-    public function watch()
+    public function watches()
     {
-        return $this->belongsTo(Watches::class,'id');
-    }
-
-    public function images()
-    {
-        return $this->hasMany(Images::class,'watch_id');
+        return $this->hasOne(Watches::class);
     }
 
     public function brands()

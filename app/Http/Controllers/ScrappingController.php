@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brands;
+use App\Models\Description;
 use App\Models\Details;
 use App\Models\Gentleman_links;
 use App\Models\Links;
@@ -18,16 +19,9 @@ class ScrappingController extends Controller
 {
     public function scrapping()
     {
-        set_time_limit(4500);
+        set_time_limit(8000);
 
         $links = Links::pluck('href')->toArray();
-
-//        $links = Links::whereBetween('id', [771, 1413])->get()->toArray();
-//
-//        foreach ($links as $key => $value){
-//            $links[$value['id']] = $value['href'];
-//            unset($links[$key]);
-//        }
 
 
         foreach ($links as $link) {
@@ -37,6 +31,8 @@ class ScrappingController extends Controller
 
             $item = [];
 
+//            $s = $Html->find('span.price', 0)->plaintext;
+//            dump($s);
             $item['title'] = data_get($Html->find('h1', 0), 'plaintext', 'Unknown title') ?? null;
             $item['webid'] = data_get($Html->find('div.web-id', 0), 'plaintext', '-') ?? null;
             $item['model'] = data_get($Html->find('div.model', 0), 'plaintext', '-') ?? null;
@@ -100,7 +96,6 @@ class ScrappingController extends Controller
             $crown = $addInfo['Crown'] ?? '-';
             $dial_color = $addInfo['Dial Color'] ?? '-';
             $watch_functions = $addInfo['Watch Functions'] ?? '-';
-            $gender = $addInfo['Gender'] ?? '-';
             $included = $addInfo['Included'] ?? '-';
             $lug_material = $addInfo['Lug Material'] ?? '-';
             $movement = $addInfo['Movement'] ?? '-';
@@ -138,8 +133,17 @@ class ScrappingController extends Controller
                 'strap_color' => $strap_color,
                 'discontinued' => $discontinued,
                 'limited_edition' => $limited_edition,
-                'gender' => $gender,
             ]);
+
+//            $Html->find('div.attributes-table-details');
+//            $text = $Html->find('div.std', 0)->innertext;
+            $text = data_get($Html->find('div.std', 0), 'plaintext', '-');
+
+            Description::insert([
+                'watch_id' => $id,
+                'description' => $text,
+            ]);
+
         }
     }
 

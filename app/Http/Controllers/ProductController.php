@@ -4,113 +4,74 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Brands;
 use App\Models\Category;
 use App\Models\Details;
-use App\Models\Images;
-use App\Models\Products;
-use App\Models\Watches;
-use Illuminate\Support\Facades\DB;
-use App\Models\ProductVariants;
-use Illuminate\Http\Request;
 use App\Models\Image;
+use App\Models\Images;
 use App\Models\Subcategory;
-use Illuminate\Support\Facades\Session;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function PHPUnit\Framework\throwException;
+use App\Models\Watches;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductController extends Controller
 {
     public function product($watch_id)
     {
-        $watch = DB::table('watches')
-            ->join('images', 'watches.id', '=', 'images.watch_id')
-            ->join('details', 'watches.id', '=', 'details.watch_id')
-            ->where('watches.id', '=', intval($watch_id))
-            ->get();
+        $watch = Watches::find($watch_id);
+        $brand = $watch->details()->value('signatures');
+        $watches = $watch->getRecomendedWatches($brand);
+        dd($watches);
+        dump($watch->images()->get());
+        $images = $watch->images()->get()->makeHidden(['id', 'watch_id'])->toArray();
+        $details = $watch->details()->get()->makeHidden(['signatures', 'id', 'watch_id'])->toArray();
 
-        $images = [];
-        foreach ($watch as $watchData){
-            $images[] = $watchData->image;
-            $images[] = $watchData->image1;
-            $images[] = $watchData->image2;
-            $images[]= $watchData->image3;
-            $images[] = $watchData->image4;
-        }
+        dd($details);
 
-        $brand = $watchData->signatures;
+
+//        $additionalInformation = [];
+//        foreach ($watch as $key => $watch1) {
+//            $keySkip = ['id', 'title', 'price', 'watch_id', 'image', 'image1', 'image2', 'image3', 'image4', 'image5',
+//                'signatures', 'description'];
+//            $watch1Skip = [null, 'N/A', '-'];
+//            if (in_array($key, $keySkip)) {
+//                continue;
+//            } elseif (in_array($watch1, $watch1Skip)) {
+//                continue;
+//            }
+//
+//            $underline = '_';
+//            $key = ucfirst(str_replace($underline, " ", $key));
+//            $additionalInformation[$key] = $watch1;
+//        }
+
+
+        $images[] = $watch->image;
+        $images[] = $watch->image1;
+        $images[] = $watch->image2;
+        $images[] = $watch->image3;
+        $images[] = $watch->image4;
+
 
         $watches = DB::table('watches')
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
             ->where('signatures', '=', $brand)
+            ->where('price', '>', 1)
             ->inRandomOrder()
             ->take(15)
             ->get()
             ->toArray();
 
-        $sidebar = [];
-        $detailsData = Details::all();
-
-        $brands = $detailsData->pluck('signatures')->toArray();
-        $watchBrands = array_filter(array_unique($brands));
-
-        $data = [];
-
-        foreach ($watchBrands as $watchBrand) {
-            $data[$watchBrand] = trim($watchBrand);
-        }
-
-        $sidebar['Brands'] = $data;
-
-        $data = [];
-        $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
-
-        foreach ($keys as $key){
-            $data[$key] = $key;
-        }
-
-        $sidebar['Condition'] = $data;
+//        $sidebar = [];
+//        $detailsData = Details::all();
+//
+//        $brands = $detailsData->pluck('signatures')->toArray();
+//        $watchBrands = array_filter(array_unique($brands));
 
 
-        $data = [];
-        $keys = ['Manual', 'Automatic', 'Quartz'];
-
-        foreach ($keys as $key){
-            $data[$key] = $key;
-        }
-
-        $sidebar['Movement'] = $data;
-
-        $data = [];
-        $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
-
-        foreach ($keys as $key){
-            $data[$key] = $key;
-        }
-
-        $sidebar['Band type'] = $data;
-
-        $data = [];
-        $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
-
-        foreach ($keys as $key){
-            $data[$key] = $key;
-        }
-
-        $sidebar['Case material'] = $data;
-
-        $data = [];
-        $keys = ['Women', 'Men', 'Unisex'];
-
-        foreach ($keys as $key){
-            $data[$key] = $key;
-        }
-
-        $sidebar['Gender'] = $data;
-
-        return view('product.product-details', ['sidebar' => $sidebar, 'watch' => $watch, 'images' => array_chunk($images, 3), 'watches' => array_chunk($watches, 3)]);
+        return view('product.product-details', ['watch' => $watch, 'images' =>
+            array_chunk($images, 3), 'watches' => array_chunk($watches, 3), 'details' => $additionalInformation]);
     }
 
     public function productDetails($product_id)
@@ -123,7 +84,7 @@ class ProductController extends Controller
 //        $categories = Category::all();
         $images = Images::where('watch_id', $product_id)->pluck('image')->toArray();
 
-        if(!$product){
+        if (!$product) {
             throw new NotFoundHttpException('The product was\'nt found!');
         }
 
@@ -142,7 +103,7 @@ class ProductController extends Controller
         $data = [];
 
         foreach ($watchBrands as $watchBrand) {
-                $data[trim($watchBrand)] = trim($watchBrand);
+            $data[trim($watchBrand)] = trim($watchBrand);
         }
 
         $sidebar['Brands'] = $data;
@@ -150,7 +111,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -160,7 +121,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Manual', 'Automatic', 'Quartz'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -169,7 +130,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -178,7 +139,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -187,7 +148,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Women', 'Men', 'Unisex'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -197,9 +158,11 @@ class ProductController extends Controller
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
             ->where('signatures', '=', $brand)
+            ->where('price', '>', 0)
             ->paginate(15);
 
-        if(!$watches){
+
+        if (!$watches) {
             throw new NotFoundHttpException('The watches was\'nt found!');
         }
 
@@ -227,7 +190,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['New', 'Pre-Owned', 'Excellent', 'Unworn', 'Good'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -237,7 +200,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Manual', 'Automatic', 'Quartz'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -246,7 +209,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Steel', 'Leather', 'Rubber', 'Gold', 'Strap', 'Titanium', 'Mesh'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -255,7 +218,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Diamond', 'Steel', 'Gold', 'Ceramic', 'Titanium', 'Platinum', 'Aluminum', 'Carbon'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -264,7 +227,7 @@ class ProductController extends Controller
         $data = [];
         $keys = ['Women', 'Men', 'Unisex'];
 
-        foreach ($keys as $key){
+        foreach ($keys as $key) {
             $data[$key] = $key;
         }
 
@@ -273,29 +236,22 @@ class ProductController extends Controller
         $watches = DB::table('watches')
             ->join('images', 'watches.id', '=', 'images.watch_id')
             ->join('details', 'watches.id', '=', 'details.watch_id')
-            ->where('signatures', 'LIKE', '%'.$value.'%')
-            ->orWhere('condition', 'LIKE', '%'.$value.'%')
-            ->orWhere('movement', 'LIKE', '%'.$value.'%')
-            ->orWhere('band_type','LIKE', '%'.$value.'%')
-            ->orWhere('gender','LIKE', '%'.$value.'%')
+            ->where('price', '>', 0)
+            ->where('signatures', 'LIKE', '%' . $value . '%')
+            ->orWhere('condition', 'LIKE', '%' . $value . '%')
+            ->orWhere('movement', 'LIKE', '%' . $value . '%')
+            ->orWhere('band_type', 'LIKE', '%' . $value . '%')
+            ->orWhere('gender', 'LIKE', '%' . $value . '%')
             ->paginate(15);
+
 
         return view('product.products', compact('watches', 'sidebar'));
     }
 
-    public function filters($stringSelected)
+    public function filters($selected)
     {
-        $jsons = json_decode($stringSelected, true);
+        $jsons = json_decode($selected, true);
 
-//        dd($jsons);
-
-
-//        session_start();
-//        $_SESSION['sessionJsons'] = $jsons;
-//
-//        $sessionJsons = $_SESSION['sessionJsons'];
-//
-//        dd($sessionJsons);
 
         $brands = [];
         $condition = [];
@@ -355,7 +311,10 @@ class ProductController extends Controller
             $query = $query->whereIn('case_material', $case_material);
         }
 
-        $watches = $query ? $query->paginate() : [];
+
+        $watches = $query ? $query->paginate(15) : [];
+
+//        dd($watches);
 
         $sidebar = [];
         $brands = Details::pluck('signatures')->toArray();
